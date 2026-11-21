@@ -1,0 +1,66 @@
+name: iPhone app
+
+on:
+  push:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults: { run: { working-directory: ios } }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Make the Xcode project
+        run: xcodegen generate
+      - name: Compile and run the tests on a simulated iPhone
+        run: |
+          set -o pipefail
+          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild test -project Crowdography.xcodeproj -scheme Crowdography \
+            -destination "id=$DEST" CODE_SIGNING_ALLOWED=NO | tail -n 120
+
+  testflight:
+    # Sends a build to Apple's TestFlight, from the main branch only, once the App Store Connect key is in the repository secrets.
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults: { run: { working-directory: ios } }
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - name: Check the Apple key is set up
+        id: key
+        run: |
+          if [ -n "$ASC_KEY_ID" ] && [ -n "$ASC_ISSUER_ID" ] && [ -n "$ASC_KEY_P8" ]; then echo "ready=yes" >> "$GITHUB_OUTPUT"; else echo "No App Store Connect key yet: skipping TestFlight."; echo "ready=no" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.key.outputs.ready == 'yes'
+      - name: Install XcodeGen
+        if: steps.key.outputs.ready == 'yes'
+        run: brew install xcodegen && xcodegen generate
+      - name: Build, sign with Apple's cloud signing, and upload to TestFlight
+        if: steps.key.outputs.ready == 'yes'
+        run: |
+          set -o pipefail
+          KEYFILE="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s' "$ASC_KEY_P8" > "$KEYFILE"
+          AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEYFILE -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
+          xcodebuild archive -project Crowdography.xcodeproj -scheme Crowdography -configuration Release \
+            -destination "generic/platform=iOS" -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH | tail -n 80
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
+            -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/export" $AUTH | tail -n 80
+          rm -f "$KEYFILE"
