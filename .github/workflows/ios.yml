@@ -71,7 +71,17 @@ jobs:
           AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEYFILE -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
           xcodebuild archive -project Crowdography.xcodeproj -scheme Crowdography -configuration Release \
             -destination "generic/platform=iOS" -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH | tail -n 80
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH 2>&1 | tee "$RUNNER_TEMP/tf.log" | tail -n 80
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
-            -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/export" $AUTH | tail -n 80
+            -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/export" $AUTH 2>&1 | tee -a "$RUNNER_TEMP/tf.log" | tail -n 80
           rm -f "$KEYFILE"
+      - name: Save the TestFlight log to the ci-logs branch
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/AuthKey.p8"
+          LOG="$RUNNER_TEMP/tf.log"; [ -f "$LOG" ] || echo "no log (key missing or failed before archiving)" > "$LOG"
+          { echo "commit ${{ github.sha }}  build ${{ github.run_number }}  result ${{ job.status }}  key ready: ${{ steps.key.outputs.ready }}  $(date -u)"; grep -E "error:|\*\* (ARCHIVE|EXPORT)|Upload|upload|provisioning|Provisioning|signing|Signing" "$LOG" | head -200; echo ---; tail -n 120 "$LOG"; } > "$RUNNER_TEMP/tfsummary.txt"
+          cd "$RUNNER_TEMP" && rm -rf logs && git clone -q --depth 1 --branch ci-logs "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" logs
+          cd logs && cp "$RUNNER_TEMP/tfsummary.txt" ios-testflight.txt
+          git config user.name "build-log"; git config user.email "build-log@users.noreply.github.com"
+          git add ios-testflight.txt && git commit -qm "TestFlight log ${{ github.sha }}" && git push -q origin ci-logs
