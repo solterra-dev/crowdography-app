@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # only so the build can save its log to the ci-logs branch for Claude to read
 
 concurrency:
   group: ios-${{ github.ref }}
@@ -28,7 +28,18 @@ jobs:
           set -o pipefail
           DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
           xcodebuild test -project Crowdography.xcodeproj -scheme Crowdography \
-            -destination "id=$DEST" CODE_SIGNING_ALLOWED=NO | tail -n 120
+            -destination "id=$DEST" CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$RUNNER_TEMP/build.log" | tail -n 120
+      - name: Save the build log to the ci-logs branch
+        if: always()
+        working-directory: .
+        run: |
+          LOG="$RUNNER_TEMP/build.log"; [ -f "$LOG" ] || echo "no log (failed before compiling)" > "$LOG"
+          { echo "commit ${{ github.sha }}  result ${{ job.status }}  $(date -u)"; grep -E "error:|warning: .*Crowdography|\*\* (TEST|BUILD)|Test Case|Executed" "$LOG" | head -300; echo ---; tail -n 150 "$LOG"; } > "$RUNNER_TEMP/summary.txt"
+          git config user.name "build-log"; git config user.email "build-log@users.noreply.github.com"
+          git fetch --depth 1 origin ci-logs 2>/dev/null && git checkout -B ci-logs FETCH_HEAD || git checkout --orphan ci-logs
+          git rm -rq --cached . 2>/dev/null || true
+          cp "$RUNNER_TEMP/summary.txt" ios-build.txt
+          git add ios-build.txt && git commit -qm "iOS build log ${{ github.sha }}" && git push -q origin ci-logs
 
   testflight:
     # Sends a build to Apple's TestFlight, from the main branch only, once the App Store Connect key is in the repository secrets.
