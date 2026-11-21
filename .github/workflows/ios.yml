@@ -71,7 +71,7 @@ jobs:
           AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEYFILE -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
           xcodebuild archive -project Crowdography.xcodeproj -scheme Crowdography -configuration Release \
             -destination "generic/platform=iOS" -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH 2>&1 | tee "$RUNNER_TEMP/tf.log" | tail -n 80
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} CODE_SIGN_IDENTITY="Apple Distribution" $AUTH 2>&1 | tee "$RUNNER_TEMP/tf.log" | tail -n 80
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Crowdography.xcarchive" \
             -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/export" $AUTH 2>&1 | tee -a "$RUNNER_TEMP/tf.log" | tail -n 80
           rm -f "$KEYFILE"
