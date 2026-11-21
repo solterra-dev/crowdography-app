@@ -14,11 +14,15 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 45
     defaults: { run: { working-directory: ios } }
     steps:
       - uses: actions/checkout@v4
+      - name: Use the newest Xcode on the machine (Apple requires Xcode 26 or later for uploads)
+        working-directory: .
+        run: |
+          X=$(ls -d /Applications/Xcode_*.app | grep -v beta | sort -V | tail -1); echo "Using $X"; sudo xcode-select -s "$X"; xcodebuild -version
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Make the Xcode project
@@ -34,7 +38,7 @@ jobs:
         working-directory: .
         run: |
           LOG="$RUNNER_TEMP/build.log"; [ -f "$LOG" ] || echo "no log (failed before compiling)" > "$LOG"
-          { echo "commit ${{ github.sha }}  result ${{ job.status }}  $(date -u)"; grep -E "error:|warning: .*Crowdography|\*\* (TEST|BUILD)|Test Case|Executed" "$LOG" | head -300; echo ---; tail -n 150 "$LOG"; } > "$RUNNER_TEMP/summary.txt"
+          { echo "commit ${{ github.sha }}  $(xcodebuild -version | head -1)  result ${{ job.status }}  $(date -u)"; grep -E "error:|warning: .*Crowdography|\*\* (TEST|BUILD)|Test Case|Executed" "$LOG" | head -300; echo ---; tail -n 150 "$LOG"; } > "$RUNNER_TEMP/summary.txt"
           git config user.name "build-log"; git config user.email "build-log@users.noreply.github.com"
           git fetch --depth 1 origin ci-logs 2>/dev/null && git checkout -B ci-logs FETCH_HEAD || git checkout --orphan ci-logs
           git rm -rq --cached . 2>/dev/null || true
@@ -45,7 +49,7 @@ jobs:
     # Sends a build to Apple's TestFlight, from the main branch only, once the App Store Connect key is in the repository secrets.
     needs: build-and-test
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
     defaults: { run: { working-directory: ios } }
     env:
@@ -54,6 +58,10 @@ jobs:
       ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
     steps:
       - uses: actions/checkout@v4
+      - name: Use the newest Xcode on the machine (Apple requires Xcode 26 or later for uploads)
+        working-directory: .
+        run: |
+          X=$(ls -d /Applications/Xcode_*.app | grep -v beta | sort -V | tail -1); echo "Using $X"; sudo xcode-select -s "$X"; xcodebuild -version
       - name: Check the Apple key is set up
         id: key
         working-directory: .

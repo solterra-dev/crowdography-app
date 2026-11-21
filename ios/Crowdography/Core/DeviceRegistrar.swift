@@ -1,7 +1,6 @@
 import CryptoKit
 import DeviceCheck
 import Foundation
-import UIKit
 
 /// Sign-up for a phone. Jeff 2026-11-15: phones that cannot prove they are genuine are not allowed to film.
 /// Steps: make the security-chip filming key, get a one-time challenge from Chronum, have Apple's App Attest vouch
@@ -53,7 +52,7 @@ enum DeviceRegistrar {
             // Jeff 2026-11-15: keep device data. Apps cannot read hardware serial numbers; make, model and versions are kept.
             "device_make": "Apple",
             "device_model": hardwareModel(),
-            "os_version": "iOS " + UIDevice.current.systemVersion,
+            "os_version": "iOS " + osVersion(),
             "app_version": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0",
         ]
         do {
@@ -65,6 +64,11 @@ enum DeviceRegistrar {
             CaptureKey.discard()   // start over with a fresh key next time
             throw e
         }
+    }
+
+    static func osVersion() -> String {
+        let v = ProcessInfo.processInfo.operatingSystemVersion
+        return "\(v.majorVersion).\(v.minorVersion).\(v.patchVersion)"
     }
 
     /// The exact model code, for example "iPhone17,1".
