@@ -6,7 +6,8 @@ import SwiftUI
 final class AppModel: ObservableObject {
     /// blocked: this phone may not film (failed the genuine-phone check, or the service is not offered here).
     /// problem: something else went wrong; shows a title and the exact reason, with a Try again button.
-    enum Phase: Equatable { case starting, signingUp, ready, blocked(String), problem(String, String) }
+    /// signIn: the phone is genuine but nobody is signed in on it yet.
+    enum Phase: Equatable { case starting, signingUp, signIn, ready, blocked(String), problem(String, String) }
     @Published private(set) var phase: Phase = .starting
     @Published private(set) var gatheringName: String?
     @Published private(set) var hostSeesOriginals = false
@@ -26,14 +27,10 @@ final class AppModel: ObservableObject {
             let k = try CaptureKey.loadOrCreate()
             let id = try await DeviceRegistrar.register()
             key = k; deviceId = id
-            do { try await recorder.camera.configure() }
-            catch { phase = .problem("The camera could not start", error.localizedDescription); return }
-            await PhotoLibrarySaver.requestAccess()   // add-only; filming works either way
-            let shown = Date().timeIntervalSince(began)   // keep the opening screen up long enough to be seen
-            if shown < 1.2 { try? await Task.sleep(nanoseconds: UInt64((1.2 - shown) * 1_000_000_000)) }
-            queue.attach(deviceId: id, key: k)
-            recorder.attach(deviceId: id, key: k)
-            phase = .ready
+            // Jeff 2026-11-21: sign in before filming. The server says whether this phone is signed in and whether sign-in is switched on.
+            let s = try await APIClient.shared.postSigned("/v1/crowd/session", [:], deviceId: id, key: k).body
+            if (s["signed_in"] as? Bool) != true && (s["sign_in_required"] as? Bool) == true { phase = .signIn; return }
+            await openCamera(began: began)
         } catch let e as APIError where ["not_genuine", "device_not_allowed", "region_not_served"].contains(e.code) {
             phase = .blocked(e.message)
         } catch let e as DeviceRegistrar.RegistrationError {
@@ -44,6 +41,52 @@ final class AppModel: ObservableObject {
             phase = .problem("Can't reach Crowdography right now", error.localizedDescription)
         }
     }
+
+    /// The last stretch of getting ready: camera, photo-library permission, then the camera screen.
+    private func openCamera(began: Date?) async {
+        guard let id = deviceId, let k = key else { return }
+        do { try await recorder.camera.configure() }
+        catch { phase = .problem("The camera could not start", error.localizedDescription); return }
+        await PhotoLibrarySaver.requestAccess()   // add-only; filming works either way
+        if let began {   // keep the opening screen up long enough to be seen
+            let shown = Date().timeIntervalSince(began)
+            if shown < 1.2 { try? await Task.sleep(nanoseconds: UInt64((1.2 - shown) * 1_000_000_000)) }
+        }
+        queue.attach(deviceId: id, key: k)
+        recorder.attach(deviceId: id, key: k)
+        phase = .ready
+    }
+
+    // MARK: sign-in by email code
+
+    /// The address the last code went to, while the app waits for the person to type the code.
+    @Published private(set) var codeSentTo: String?
+    private var signinId: String?
+
+    /// Asks Chronum to email a 6-digit code. Returns what went wrong, or nil.
+    func requestCode(email: String) async -> String? {
+        guard let deviceId, let key else { return "This phone is not ready yet. Close the app and open it again." }
+        do {
+            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/codes", ["email": email], deviceId: deviceId, key: key).body
+            guard let sid = r["signin_id"] as? String else { return "Chronum did not confirm the code was sent. Try again." }
+            signinId = sid; codeSentTo = email
+            return nil
+        } catch { return error.localizedDescription }
+    }
+
+    /// Checks the code. On success the phone belongs to the account and the camera opens.
+    func confirmCode(_ code: String) async -> String? {
+        guard let deviceId, let key, let signinId else { return "Ask for a code first." }
+        do {
+            _ = try await APIClient.shared.postSigned("/v1/crowd/signin/verify", ["signin_id": signinId, "code": code], deviceId: deviceId, key: key)
+            self.signinId = nil; codeSentTo = nil
+            phase = .signingUp
+            await openCamera(began: nil)
+            return nil
+        } catch { return error.localizedDescription }
+    }
+
+    func useDifferentEmail() { signinId = nil; codeSentTo = nil }
 
     func appBecameActive() { queue.kick() }
 

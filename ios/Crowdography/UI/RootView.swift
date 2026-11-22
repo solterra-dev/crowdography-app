@@ -23,6 +23,8 @@ struct RootView: View {
                 Button("Try again") { Task { await model.start() } }.buttonStyle(.borderedProminent)
             }
             .padding(32)
+        case .signIn:
+            SignInView()
         case .ready:
             CameraScreen(recorder: model.recorder, queue: model.queue)
         }
