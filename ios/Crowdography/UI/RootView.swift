@@ -25,6 +25,8 @@ struct RootView: View {
             .padding(32)
         case .signIn:
             SignInView()
+        case .nameStep:
+            NameView()
         case .ready:
             CameraScreen(recorder: model.recorder, queue: model.queue)
         }

@@ -7,8 +7,11 @@ final class AppModel: ObservableObject {
     /// blocked: this phone may not film (failed the genuine-phone check, or the service is not offered here).
     /// problem: something else went wrong; shows a title and the exact reason, with a Try again button.
     /// signIn: the phone is genuine but nobody is signed in on it yet.
-    enum Phase: Equatable { case starting, signingUp, signIn, ready, blocked(String), problem(String, String) }
+    /// nameStep: signed in, but the account has no name yet, so footage would have no author.
+    enum Phase: Equatable { case starting, signingUp, signIn, nameStep, ready, blocked(String), problem(String, String) }
     @Published private(set) var phase: Phase = .starting
+    /// The name footage from this account is credited to. Self-declared: nothing has checked it yet.
+    @Published private(set) var authorName: String?
     @Published private(set) var gatheringName: String?
     @Published private(set) var hostSeesOriginals = false
     @Published var notice: String?
@@ -30,6 +33,9 @@ final class AppModel: ObservableObject {
             // Jeff 2026-11-21: sign in before filming. The server says whether this phone is signed in and whether sign-in is switched on.
             let s = try await APIClient.shared.postSigned("/v1/crowd/session", [:], deviceId: id, key: k).body
             if (s["signed_in"] as? Bool) != true && (s["sign_in_required"] as? Bool) == true { phase = .signIn; return }
+            // Jeff 2026-11-22: every photo and video has a named author, so the account needs a name before filming.
+            authorName = s["name"] as? String
+            if (s["name_required"] as? Bool) == true { phase = .nameStep; return }
             await openCamera(began: began)
         } catch let e as APIError where ["not_genuine", "device_not_allowed", "region_not_served"].contains(e.code) {
             phase = .blocked(e.message)
@@ -74,12 +80,28 @@ final class AppModel: ObservableObject {
         } catch { return error.localizedDescription }
     }
 
-    /// Checks the code. On success the phone belongs to the account and the camera opens.
+    /// Checks the code. On success the phone belongs to the account; the camera opens, or the name step if the account has no name yet.
     func confirmCode(_ code: String) async -> String? {
         guard let deviceId, let key, let signinId else { return "Ask for a code first." }
         do {
-            _ = try await APIClient.shared.postSigned("/v1/crowd/signin/verify", ["signin_id": signinId, "code": code], deviceId: deviceId, key: key)
+            var body: [String: Any] = ["signin_id": signinId, "code": code]
+            if let codeSentTo { body["email"] = codeSentTo }   // the code proves this address, so the server can keep it with the account
+            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/verify", body, deviceId: deviceId, key: key).body
             self.signinId = nil; codeSentTo = nil
+            authorName = r["name"] as? String
+            if (r["name_required"] as? Bool) == true { phase = .nameStep; return nil }
+            phase = .signingUp
+            await openCamera(began: nil)
+            return nil
+        } catch { return error.localizedDescription }
+    }
+
+    /// Saves the name footage is credited to, then opens the camera. Returns what went wrong, or nil.
+    func saveName(_ name: String) async -> String? {
+        guard let deviceId, let key else { return "This phone is not ready yet. Close the app and open it again." }
+        do {
+            let r = try await APIClient.shared.postSigned("/v1/crowd/account/profile", ["full_name": name], deviceId: deviceId, key: key).body
+            authorName = r["name"] as? String ?? name
             phase = .signingUp
             await openCamera(began: nil)
             return nil

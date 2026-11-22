@@ -3,6 +3,8 @@ import SwiftUI
 /// Each piece and photo, and how far it has got: hashed, uploaded, verified.
 struct UploadsView: View {
     @ObservedObject var queue: UploadQueue
+    /// The name on the account, or nil while sign-in is not switched on.
+    var author: String?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -20,6 +22,13 @@ struct UploadsView: View {
                 }
             }
             .overlay { if queue.jobs.isEmpty { Text("Nothing filmed yet.").foregroundStyle(.secondary) } }
+            .safeAreaInset(edge: .bottom) {
+                if let author {
+                    Text("Filmed by \(author) · name not yet verified")
+                        .font(.footnote).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity).padding(.vertical, 8).background(.bar)
+                }
+            }
             .navigationTitle("Your footage")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Retry") { queue.kick() } }

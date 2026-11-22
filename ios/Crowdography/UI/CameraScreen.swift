@@ -20,7 +20,7 @@ struct CameraScreen: View {
             .padding()
         }
         .sheet(isPresented: $showJoin) { JoinSheet() }
-        .sheet(isPresented: $showUploads) { UploadsView(queue: queue) }
+        .sheet(isPresented: $showUploads) { UploadsView(queue: queue, author: model.authorName) }
     }
 
     private var topBar: some View {

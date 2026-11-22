@@ -7,3 +7,4 @@
 - 0.1.0 build 12: every photo and video is also copied to the phone's photo library; opening screen with the Crowdography mark.
 - 0.1.0 build 13: the app removes its own working copy once a clip is verified and safely in the photo library.
 - 0.1.0 build 14: sign-in screen (email plus 6-digit code) shown before the camera once the server has sign-in switched on.
+- 0.1.0 build 15: after the first sign-in the app asks for your full name, so every photo and video has a named author; the name shows under "Your footage" as not yet verified. Needs server 0.9.
