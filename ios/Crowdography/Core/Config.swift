@@ -2,8 +2,8 @@ import Foundation
 
 /// Fixed settings. Nothing secret lives in the app: every request is proven by the phone's own security-chip key.
 enum Config {
-    /// Chronum's address for Crowdography. The /v1/crowd addresses answer once they are wired into the live router.
-    static let apiBase = URL(string: "https://api.chronumapi.com")!
+    /// Chronum's address for Crowdography. Chronum answers at chronumapi.com/v1 (there is no api. subdomain).
+    static let apiBase = URL(string: "https://chronumapi.com")!
 
     /// Jeff 2026-11-15: pieces are at most 15 minutes; a longer recording rolls into a new chained piece.
     static let maxPieceSeconds: Double = 900
