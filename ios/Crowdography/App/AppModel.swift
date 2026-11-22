@@ -4,8 +4,9 @@ import SwiftUI
 /// Everything the screens need: sign-up state, the camera, the upload queue and the current gathering.
 @MainActor
 final class AppModel: ObservableObject {
-    /// blocked: this phone may not film (failed the genuine-phone check, or the service is not offered here). offline: could not reach the server.
-    enum Phase: Equatable { case starting, signingUp, ready, blocked(String), offline(String) }
+    /// blocked: this phone may not film (failed the genuine-phone check, or the service is not offered here).
+    /// problem: something else went wrong; shows a title and the exact reason, with a Try again button.
+    enum Phase: Equatable { case starting, signingUp, ready, blocked(String), problem(String, String) }
     @Published private(set) var phase: Phase = .starting
     @Published private(set) var gatheringName: String?
     @Published private(set) var hostSeesOriginals = false
@@ -24,7 +25,8 @@ final class AppModel: ObservableObject {
             let k = try CaptureKey.loadOrCreate()
             let id = try await DeviceRegistrar.register()
             key = k; deviceId = id
-            try await recorder.camera.configure()
+            do { try await recorder.camera.configure() }
+            catch { phase = .problem("The camera could not start", error.localizedDescription); return }
             queue.attach(deviceId: id, key: k)
             recorder.attach(deviceId: id, key: k)
             phase = .ready
@@ -35,7 +37,7 @@ final class AppModel: ObservableObject {
         } catch let e as CaptureKey.KeyError {
             phase = .blocked(e.localizedDescription)
         } catch {
-            phase = .offline(error.localizedDescription)
+            phase = .problem("Can't reach Crowdography right now", error.localizedDescription)
         }
     }
 

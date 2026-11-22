@@ -10,6 +10,7 @@ final class CameraController: NSObject {
     private let movieOutput = AVCaptureMovieFileOutput()
     private let photoOutput = AVCapturePhotoOutput()
     private var configured = false
+    private var cameraDevice: AVCaptureDevice?
 
     /// Called on the main queue when a piece really starts (first frames on disk).
     var onPieceStarted: (@MainActor (URL, Date) -> Void)?
@@ -45,22 +46,35 @@ final class CameraController: NSObject {
     }
 
     private func configureOnQueue() throws {
-        if configured { if !session.isRunning { session.startRunning() }; return }
+        if !configured {
+            try ExceptionGuard.run { try self.buildSession() }      // begins and commits the configuration
+            try? ExceptionGuard.run { try self.lockFrameRate() }    // after the commit, when the 4K format is active; not fatal if refused
+            configured = true
+        }
+        // Starting the camera must happen AFTER the configuration is committed (build 10 did it before, which closed the app).
+        if !session.isRunning { try ExceptionGuard.run { self.session.startRunning() } }
+    }
+
+    private func buildSession() throws {
         session.beginConfiguration()
         defer { session.commitConfiguration() }
-        session.sessionPreset = session.canSetSessionPreset(.hd4K3840x2160) ? .hd4K3840x2160 : .high
+        session.inputs.forEach { session.removeInput($0) }      // a clean start if an earlier try stopped half way
+        session.outputs.forEach { session.removeOutput($0) }
 
         guard let cam = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { throw CameraError.noCamera }
         let camIn = try AVCaptureDeviceInput(device: cam)
         guard session.canAddInput(camIn) else { throw CameraError.setupFailed }
         session.addInput(camIn)
+        cameraDevice = cam
         if let mic = AVCaptureDevice.default(for: .audio), let micIn = try? AVCaptureDeviceInput(device: mic), session.canAddInput(micIn) {
             session.addInput(micIn)
         }
-        try lockFrameRate(cam)
+        if session.canSetSessionPreset(.hd4K3840x2160) { session.sessionPreset = .hd4K3840x2160 }
+        else if session.canSetSessionPreset(.high) { session.sessionPreset = .high }
 
-        guard session.canAddOutput(movieOutput), session.canAddOutput(photoOutput) else { throw CameraError.setupFailed }
+        guard session.canAddOutput(movieOutput) else { throw CameraError.setupFailed }
         session.addOutput(movieOutput)
+        guard session.canAddOutput(photoOutput) else { throw CameraError.setupFailed }
         session.addOutput(photoOutput)
         movieOutput.maxRecordedDuration = CMTime(seconds: Config.maxPieceSeconds, preferredTimescale: 600)
         if let conn = movieOutput.connection(with: .video) {
@@ -70,11 +84,10 @@ final class CameraController: NSObject {
             if conn.isVideoRotationAngleSupported(90) { conn.videoRotationAngle = 90 }
         }
         photoOutput.maxPhotoQualityPrioritization = .quality
-        configured = true
-        session.startRunning()
     }
 
-    private func lockFrameRate(_ cam: AVCaptureDevice) throws {
+    private func lockFrameRate() throws {
+        guard let cam = cameraDevice else { return }
         try cam.lockForConfiguration()
         defer { cam.unlockForConfiguration() }
         let d = CMTime(value: 1, timescale: Config.maxFramesPerSecond)
@@ -85,23 +98,36 @@ final class CameraController: NSObject {
     var isRecording: Bool { movieOutput.isRecording }
 
     func startPiece(to url: URL) {
-        queue.async { self.movieOutput.startRecording(to: url, recordingDelegate: self) }
+        queue.async {
+            do { try ExceptionGuard.run { self.movieOutput.startRecording(to: url, recordingDelegate: self) } }
+            catch { let e = error; Task { @MainActor in self.onPieceFinished?(url, false, e) } }
+        }
     }
 
     func stopPiece() {
-        queue.async { if self.movieOutput.isRecording { self.movieOutput.stopRecording() } }
+        queue.async { try? ExceptionGuard.run { if self.movieOutput.isRecording { self.movieOutput.stopRecording() } } }
     }
 
     func capturePhoto() async throws -> Data {
         try await withCheckedThrowingContinuation { (c: CheckedContinuation<Data, Error>) in
             queue.async {
-                let settings = self.photoOutput.availablePhotoCodecTypes.contains(.hevc)
-                    ? AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-                    : AVCapturePhotoSettings()
-                settings.photoQualityPrioritization = .quality
-                if let conn = self.photoOutput.connection(with: .video), conn.isVideoRotationAngleSupported(90) { conn.videoRotationAngle = 90 }
-                self.handlerLock.lock(); self.photoHandlers[settings.uniqueID] = { c.resume(with: $0) }; self.handlerLock.unlock()
-                self.photoOutput.capturePhoto(with: settings, delegate: self)
+                var registered: Int64?
+                do {
+                    try ExceptionGuard.run {
+                        let settings = self.photoOutput.availablePhotoCodecTypes.contains(.hevc)
+                            ? AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+                            : AVCapturePhotoSettings()
+                        settings.photoQualityPrioritization = .quality
+                        if let conn = self.photoOutput.connection(with: .video), conn.isVideoRotationAngleSupported(90) { conn.videoRotationAngle = 90 }
+                        self.handlerLock.lock(); self.photoHandlers[settings.uniqueID] = { c.resume(with: $0) }; self.handlerLock.unlock()
+                        registered = settings.uniqueID
+                        self.photoOutput.capturePhoto(with: settings, delegate: self)
+                    }
+                } catch {
+                    // Answer exactly once: through the registered handler if there is one, otherwise directly.
+                    self.handlerLock.lock(); let h = registered.flatMap { self.photoHandlers.removeValue(forKey: $0) }; self.handlerLock.unlock()
+                    if let h { h(.failure(error)) } else if registered == nil { c.resume(throwing: error) }
+                }
             }
         }
     }

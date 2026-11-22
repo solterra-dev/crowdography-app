@@ -12,7 +12,7 @@ final class LocationProvider: NSObject, ObservableObject, CLLocationManagerDeleg
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = 5
+        manager.distanceFilter = kCLDistanceFilterNone   // keep fresh fixes coming even when standing still
     }
 
     func start() {

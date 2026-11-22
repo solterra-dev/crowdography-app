@@ -21,11 +21,11 @@ struct RootView: View {
                 Button("Try again") { Task { await model.start() } }.buttonStyle(.borderedProminent)
             }
             .padding(32)
-        case .offline(let why):
+        case .problem(let title, let why):
             VStack(spacing: 16) {
-                Image(systemName: "wifi.exclamationmark").font(.system(size: 48))
-                Text("Can't reach Crowdography right now").font(.headline).multilineTextAlignment(.center)
-                Text(why).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Image(systemName: "exclamationmark.triangle").font(.system(size: 48))
+                Text(title).font(.headline).multilineTextAlignment(.center)
+                Text(why).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center).textSelection(.enabled)
                 Button("Try again") { Task { await model.start() } }.buttonStyle(.borderedProminent)
             }
             .padding(32)

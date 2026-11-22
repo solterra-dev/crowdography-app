@@ -8,6 +8,7 @@ import Foundation
 final class UploadQueue: ObservableObject {
     @Published private(set) var jobs: [CaptureJob] = CaptureStore.loadJobs()
     private var running = false
+    private var again = false
     private var deviceId: String?
     private var key: CaptureKey?
     private let api: APIClient
@@ -35,21 +36,25 @@ final class UploadQueue: ObservableObject {
 
     /// Run the queue now (after a new piece, a finished upload, or the app coming back to the screen).
     func kick() {
-        guard !running, deviceId != nil, key != nil else { return }
+        guard deviceId != nil, key != nil else { return }
+        if running { again = true; return }   // a pass is under way: run one more when it ends, so no finished upload is left waiting
         running = true
-        Task { await self.drain(); self.running = false }
+        Task {
+            repeat { self.again = false; await self.drain() } while self.again
+            self.running = false
+        }
     }
 
     private func drain() async {
-        let busy = await BackgroundUploader.shared.runningJobIds()
-        // A transfer marked as running that iOS no longer has (the phone restarted) starts again.
-        for i in jobs.indices where jobs[i].stage == .uploading && !busy.contains(jobs[i].id) {
-            jobs[i].stage = .waiting
-        }
-        save()
         var madeProgress = true
         while madeProgress {
             madeProgress = false
+            let busy = await BackgroundUploader.shared.runningJobIds()
+            // A transfer marked as running that iOS no longer has (the phone restarted) starts again.
+            for i in jobs.indices where jobs[i].stage == .uploading && !busy.contains(jobs[i].id) && !jobs[i].uploaded {
+                jobs[i].stage = .waiting
+            }
+            save()
             for i in jobs.indices where !jobs[i].isDone && !busy.contains(jobs[i].id) && jobs[i].stage != .uploading {
                 if await step(i) { madeProgress = true }
             }

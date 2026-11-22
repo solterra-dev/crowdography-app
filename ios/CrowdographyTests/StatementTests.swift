@@ -66,6 +66,15 @@ final class StatementTests: XCTestCase {
         XCTAssertTrue(k.publicKey.pemRepresentation.hasPrefix("-----BEGIN PUBLIC KEY-----"))
     }
 
+    func testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp() {
+        XCTAssertThrowsError(try ExceptionGuard.run { NSException(name: .genericException, reason: "startRunning may not be called here", userInfo: nil).raise() }) { e in
+            XCTAssertTrue(e.localizedDescription.contains("startRunning may not be called here"), e.localizedDescription)
+        }
+        XCTAssertNoThrow(try ExceptionGuard.run { })
+        struct Plain: Error {}
+        XCTAssertThrowsError(try ExceptionGuard.run { throw Plain() }) { XCTAssertTrue($0 is Plain) }
+    }
+
     func testFileHashStreams() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let data = Data((0..<20_000_000).map { UInt8($0 % 251) })
