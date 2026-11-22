@@ -119,6 +119,9 @@ final class UploadQueue: ObservableObject {
             return true
         } catch let e as APIError where e.code == "not_uploaded" {
             job.uploaded = false; job.stage = .waiting; job.lastProblem = e.message; update(i, job); return false
+        } catch let e as APIError where [400, 403, 404, 409, 413, 451].contains(e.status) {
+            // The server said no for good (for example too large, or this phone is blocked): trying again would not help.
+            job.stage = .rejected; job.lastProblem = e.message; update(i, job); return true
         } catch {
             job.attempts += 1
             job.stage = .failed

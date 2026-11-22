@@ -8,7 +8,8 @@ struct APIError: LocalizedError {
 }
 
 /// Talks to Chronum. Every request after sign-up carries three headers proving it came from this registered phone:
-/// X-Crowd-Device, X-Crowd-Time and X-Crowd-Signature, the signature covering "METHOD\nPATH\nTIME\nsha256(body)".
+/// X-Crowd-Device, X-Crowd-Time, X-Crowd-Nonce and X-Crowd-Signature. The signature covers
+/// "METHOD\nPATH\nTIME\nNONCE\nsha256(body)". The nonce is a random one-time number: the server accepts each signed request once.
 final class APIClient {
     static let shared = APIClient()
     private let session: URLSession
@@ -16,9 +17,12 @@ final class APIClient {
     init(session: URLSession = .shared) { self.session = session }
 
     /// The exact text the phone signs for one request. Kept separate so the tests can check it byte for byte.
-    static func signingMessage(method: String, path: String, time: Int, body: Data) -> Data {
-        Data("\(method)\n\(path)\n\(time)\n\(Hash.sha256Hex(body))".utf8)
+    static func signingMessage(method: String, path: String, time: Int, nonce: String, body: Data) -> Data {
+        Data("\(method)\n\(path)\n\(time)\n\(nonce)\n\(Hash.sha256Hex(body))".utf8)
     }
+
+    /// 32 random hex characters from the system's secure random source.
+    static func newNonce() -> String { Data((0..<16).map { _ in UInt8.random(in: .min ... .max) }).hexLowercase }
 
     /// POST without a phone signature: only the sign-up addresses accept this.
     func postUnsigned(_ path: String, _ json: [String: Any]) async throws -> [String: Any] {
@@ -34,13 +38,15 @@ final class APIClient {
     func postSigned(_ path: String, _ json: [String: Any], deviceId: String, key: CaptureKey) async throws -> (status: Int, body: [String: Any]) {
         let body = try JSONSerialization.data(withJSONObject: json)
         let time = Int(Date().timeIntervalSince1970)
-        let sig = try key.signBase64(Self.signingMessage(method: "POST", path: path, time: time, body: body))
+        let nonce = Self.newNonce()
+        let sig = try key.signBase64(Self.signingMessage(method: "POST", path: path, time: time, nonce: nonce, body: body))
         var req = URLRequest(url: Config.apiBase.appendingPathComponent(path))
         req.httpMethod = "POST"
         req.httpBody = body
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue(deviceId, forHTTPHeaderField: "X-Crowd-Device")
         req.setValue(String(time), forHTTPHeaderField: "X-Crowd-Time")
+        req.setValue(nonce, forHTTPHeaderField: "X-Crowd-Nonce")
         req.setValue(sig, forHTTPHeaderField: "X-Crowd-Signature")
         return try await send(req, okStatuses: [422])
     }

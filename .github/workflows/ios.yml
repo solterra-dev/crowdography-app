@@ -46,8 +46,8 @@ jobs:
           git add ios-build.txt && git commit -qm "iOS build log ${{ github.sha }}" && git push -q origin ci-logs
 
   testflight:
-    # Sends a build to Apple's TestFlight, from the main branch only, once the App Store Connect key is in the repository secrets.
-    needs: build-and-test
+    # Sends a build to Apple's TestFlight, from the main branch only. Runs beside the tests, not after them, to save a few minutes:
+    # these builds reach only our own team, and a failed test shows in the log at the same time.
     if: github.ref == 'refs/heads/main'
     runs-on: macos-26
     timeout-minutes: 60

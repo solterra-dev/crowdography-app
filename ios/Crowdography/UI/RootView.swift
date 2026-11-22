@@ -21,6 +21,14 @@ struct RootView: View {
                 Button("Try again") { Task { await model.start() } }.buttonStyle(.borderedProminent)
             }
             .padding(32)
+        case .offline(let why):
+            VStack(spacing: 16) {
+                Image(systemName: "wifi.exclamationmark").font(.system(size: 48))
+                Text("Can't reach Crowdography right now").font(.headline).multilineTextAlignment(.center)
+                Text(why).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Button("Try again") { Task { await model.start() } }.buttonStyle(.borderedProminent)
+            }
+            .padding(32)
         case .ready:
             CameraScreen(recorder: model.recorder, queue: model.queue)
         }

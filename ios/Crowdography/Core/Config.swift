@@ -6,7 +6,9 @@ enum Config {
     static let apiBase = URL(string: "https://chronumapi.com")!
 
     /// Jeff 2026-11-15: pieces are at most 15 minutes; a longer recording rolls into a new chained piece.
-    static let maxPieceSeconds: Double = 900
+    /// TEST PHASE (2026-11-21): the server checks each file inside the request and caps one upload at 500 MB, so pieces
+    /// are 2 minutes for now (about 340 MB of 4K). A longer recording still chains into pieces. Goes back to 900.
+    static let maxPieceSeconds: Double = 120
     /// Ask for the next piece's one-time ticket this long before the current piece ends (tickets live 300 seconds).
     static let nextTicketLeadSeconds: Double = 60
     /// Jeff 2026-11-15: 4K at most. 30 frames a second keeps 4K HEVC near 3 MB a second, under the 5 MB server cap.

@@ -110,7 +110,7 @@ final class Recorder: ObservableObject {
         guard current?.url == url else { return }
         current?.startedAt = at
         pieceStartedAt = at
-        // Get the next piece's ticket a minute before this one reaches 15 minutes.
+        // Get the next piece's ticket a minute before this one reaches its full length.
         nextTicket = nil
         nextTicketTask?.cancel()
         nextTicketTask = Task { [weak self] in
@@ -146,7 +146,7 @@ final class Recorder: ObservableObject {
         guard let ticket = t, let fix else {
             isRecording = false
             pieceStartedAt = nil
-            problem = "Filming stopped at 15 minutes: no ticket or location for the next piece."
+            problem = "Filming stopped: no ticket or location for the next piece."
             return
         }
         nextTicket = nil
