@@ -166,8 +166,28 @@ final class UploadQueue: ObservableObject {
 
     private func update(_ i: Int, _ job: CaptureJob) {
         guard jobs.indices.contains(i) else { return }
-        jobs[i] = job
+        var merged = job
+        merged.inLibrary = job.inLibrary || jobs[i].inLibrary   // the library copy may have finished while this step was waiting
+        jobs[i] = merged
+        removeLocalCopyIfSafe(i)
         save()
+    }
+
+    /// Called when the copy for the person's photo library has been saved.
+    func markInLibrary(fileName: String) {
+        guard let i = jobs.firstIndex(where: { $0.fileName == fileName }) else { return }
+        jobs[i].inLibrary = true
+        removeLocalCopyIfSafe(i)
+        save()
+    }
+
+    /// Jeff 2026-11-21: once the server has verified a clip, the app deletes its own working copy. It does so only when
+    /// BOTH are true: Chronum answered verified, and an exact copy is in the person's photo library. A clip that was
+    /// not verified, or that could not be copied to the library, is kept.
+    private func removeLocalCopyIfSafe(_ i: Int) {
+        guard jobs[i].stage == .verified, jobs[i].inLibrary, !jobs[i].localCopyRemoved else { return }
+        try? FileManager.default.removeItem(at: CaptureStore.fileURL(jobs[i].fileName))
+        jobs[i].localCopyRemoved = true
     }
 
     private func save() { CaptureStore.saveJobs(jobs) }

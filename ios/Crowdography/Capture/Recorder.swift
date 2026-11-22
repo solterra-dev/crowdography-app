@@ -173,8 +173,10 @@ final class Recorder: ObservableObject {
     /// A copy for the person's own photo library. A failure here never affects the proof or the upload.
     private func saveToLibrary(_ url: URL, isVideo: Bool, takenAt: Date, place: CLLocation) {
         Task {
-            if let why = await PhotoLibrarySaver.save(fileURL: url, isVideo: isVideo, takenAt: takenAt, place: place) {
-                self.problem = "Filmed and queued, but not copied to your photo library: " + why
+            switch await PhotoLibrarySaver.save(fileURL: url, isVideo: isVideo, takenAt: takenAt, place: place) {
+            case .saved: self.queue.markInLibrary(fileName: url.lastPathComponent)
+            case .notAllowed: break   // the person said no to library access: the app keeps its own copy
+            case .failed(let why): self.problem = "Filmed and queued, but not copied to your photo library: " + why
             }
         }
     }

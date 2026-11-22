@@ -36,6 +36,10 @@ struct CaptureJob: Codable, Identifiable, Equatable {
     var lastProblem: String?
     var failedChecks: [String] = []
     var attempts = 0
+    /// True once an exact copy is in the person's photo library.
+    var inLibrary = false
+    /// True once the app's own working copy has been removed (only after verified AND in the library).
+    var localCopyRemoved = false
 
     var isDone: Bool { stage == .verified || stage == .rejected }
     var isPhoto: Bool { mimeType.hasPrefix("image/") }

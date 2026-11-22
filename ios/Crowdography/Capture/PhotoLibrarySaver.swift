@@ -12,9 +12,10 @@ enum PhotoLibrarySaver {
     @discardableResult
     static func requestAccess() async -> Bool { isAllowed(await PHPhotoLibrary.requestAuthorization(for: .addOnly)) }
 
-    /// Returns nil when saved (or when the person said no to library access), otherwise what went wrong.
-    static func save(fileURL: URL, isVideo: Bool, takenAt: Date, place: CLLocation?) async -> String? {
-        guard isAllowed(PHPhotoLibrary.authorizationStatus(for: .addOnly)) else { return nil }
+    enum Outcome { case saved, notAllowed, failed(String) }
+
+    static func save(fileURL: URL, isVideo: Bool, takenAt: Date, place: CLLocation?) async -> Outcome {
+        guard isAllowed(PHPhotoLibrary.authorizationStatus(for: .addOnly)) else { return .notAllowed }
         do {
             try await PHPhotoLibrary.shared().performChanges {
                 let request = PHAssetCreationRequest.forAsset()
@@ -24,9 +25,9 @@ enum PhotoLibrarySaver {
                 request.creationDate = takenAt
                 request.location = place
             }
-            return nil
+            return .saved
         } catch {
-            return error.localizedDescription
+            return .failed(error.localizedDescription)
         }
     }
 }
