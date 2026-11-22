@@ -39,11 +39,14 @@ jobs:
         run: |
           LOG="$RUNNER_TEMP/build.log"; [ -f "$LOG" ] || echo "no log (failed before compiling)" > "$LOG"
           { echo "commit ${{ github.sha }}  $(xcodebuild -version | head -1)  result ${{ job.status }}  $(date -u)"; grep -E "error:|warning: .*Crowdography|\*\* (TEST|BUILD)|Test Case|Executed" "$LOG" | head -300; echo ---; tail -n 150 "$LOG"; } > "$RUNNER_TEMP/summary.txt"
-          git config user.name "build-log"; git config user.email "build-log@users.noreply.github.com"
-          git fetch --depth 1 origin ci-logs 2>/dev/null && git checkout -B ci-logs FETCH_HEAD || git checkout --orphan ci-logs
-          git rm -rq --cached . 2>/dev/null || true
-          cp "$RUNNER_TEMP/summary.txt" ios-build.txt
-          git add ios-build.txt && git commit -qm "iOS build log ${{ github.sha }}" && git push -q origin ci-logs
+          # Each job adds only its own file to a fresh copy of the ci-logs branch, and tries again if the other job pushed first.
+          for n in 1 2 3 4 5; do
+            rm -rf "$RUNNER_TEMP/logs"
+            git clone -q --depth 1 --branch ci-logs "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" "$RUNNER_TEMP/logs" || { sleep 5; continue; }
+            cp "$RUNNER_TEMP/summary.txt" "$RUNNER_TEMP/logs/ios-build.txt"
+            if (cd "$RUNNER_TEMP/logs" && git config user.name "build-log" && git config user.email "build-log@users.noreply.github.com" && git add ios-build.txt && git commit -qm "iOS build log ${{ github.sha }}" && git push -q origin ci-logs); then break; fi
+            sleep 5
+          done
 
   testflight:
     # Sends a build to Apple's TestFlight, from the main branch only. Runs beside the tests, not after them, to save a few minutes:
@@ -89,8 +92,11 @@ jobs:
         run: |
           rm -f "$RUNNER_TEMP/AuthKey.p8"
           LOG="$RUNNER_TEMP/tf.log"; [ -f "$LOG" ] || echo "no log (key missing or failed before archiving)" > "$LOG"
-          { echo "commit ${{ github.sha }}  build ${{ github.run_number }}  result ${{ job.status }}  key ready: ${{ steps.key.outputs.ready }}  $(date -u)"; grep -E "error:|\*\* (ARCHIVE|EXPORT)|Upload|upload|provisioning|Provisioning|signing|Signing" "$LOG" | head -200; echo ---; tail -n 120 "$LOG"; } > "$RUNNER_TEMP/tfsummary.txt"
-          cd "$RUNNER_TEMP" && rm -rf logs && git clone -q --depth 1 --branch ci-logs "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" logs
-          cd logs && cp "$RUNNER_TEMP/tfsummary.txt" ios-testflight.txt
-          git config user.name "build-log"; git config user.email "build-log@users.noreply.github.com"
-          git add ios-testflight.txt && git commit -qm "TestFlight log ${{ github.sha }}" && git push -q origin ci-logs
+          { echo "commit ${{ github.sha }}  build ${{ github.run_number }}  result ${{ job.status }}  key ready: ${{ steps.key.outputs.ready }}  $(date -u)"; grep -E "error:|\*\* (ARCHIVE|EXPORT)|Upload succeeded|Upload failed|Uploaded Crowdography|App Store Connect Warning" "$LOG" | cut -c1-600 | head -60; echo ---; tail -n 25 "$LOG" | cut -c1-600; } > "$RUNNER_TEMP/tfsummary.txt"
+          for n in 1 2 3 4 5; do
+            rm -rf "$RUNNER_TEMP/logs"
+            git clone -q --depth 1 --branch ci-logs "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" "$RUNNER_TEMP/logs" || { sleep 5; continue; }
+            cp "$RUNNER_TEMP/tfsummary.txt" "$RUNNER_TEMP/logs/ios-testflight.txt"
+            if (cd "$RUNNER_TEMP/logs" && git config user.name "build-log" && git config user.email "build-log@users.noreply.github.com" && git add ios-testflight.txt && git commit -qm "TestFlight log ${{ github.sha }}" && git push -q origin ci-logs); then break; fi
+            sleep 5
+          done
