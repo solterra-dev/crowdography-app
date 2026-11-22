@@ -19,6 +19,7 @@ final class AppModel: ObservableObject {
     private var key: CaptureKey?
 
     func start() async {
+        let began = Date()
         location.start()
         do {
             phase = .signingUp
@@ -27,6 +28,9 @@ final class AppModel: ObservableObject {
             key = k; deviceId = id
             do { try await recorder.camera.configure() }
             catch { phase = .problem("The camera could not start", error.localizedDescription); return }
+            await PhotoLibrarySaver.requestAccess()   // add-only; filming works either way
+            let shown = Date().timeIntervalSince(began)   // keep the opening screen up long enough to be seen
+            if shown < 1.2 { try? await Task.sleep(nanoseconds: UInt64((1.2 - shown) * 1_000_000_000)) }
             queue.attach(deviceId: id, key: k)
             recorder.attach(deviceId: id, key: k)
             phase = .ready

@@ -167,6 +167,16 @@ final class Recorder: ObservableObject {
         queue.add(CaptureJob(id: UUID().uuidString, fileName: cur.url.lastPathComponent, mimeType: "video/quicktime", chainId: chain,
                              segmentNo: segmentNo, ticket: cur.ticket, startedAt: started, endedAt: ended,
                              lat: cur.fix.coordinate.latitude, lng: cur.fix.coordinate.longitude, accuracyM: cur.fix.horizontalAccuracy))
+        saveToLibrary(cur.url, isVideo: true, takenAt: started, place: cur.fix)
+    }
+
+    /// A copy for the person's own photo library. A failure here never affects the proof or the upload.
+    private func saveToLibrary(_ url: URL, isVideo: Bool, takenAt: Date, place: CLLocation) {
+        Task {
+            if let why = await PhotoLibrarySaver.save(fileURL: url, isVideo: isVideo, takenAt: takenAt, place: place) {
+                self.problem = "Filmed and queued, but not copied to your photo library: " + why
+            }
+        }
     }
 
     // MARK: photo
@@ -187,6 +197,7 @@ final class Recorder: ObservableObject {
                 queue.add(CaptureJob(id: UUID().uuidString, fileName: name, mimeType: "image/heic", chainId: UUID().uuidString,
                                      segmentNo: 1, ticket: t, startedAt: at, endedAt: at,
                                      lat: fix.coordinate.latitude, lng: fix.coordinate.longitude, accuracyM: fix.horizontalAccuracy))
+                saveToLibrary(CaptureStore.fileURL(name), isVideo: false, takenAt: at, place: fix)
             } catch {
                 problem = "Photo not taken: " + error.localizedDescription
             }

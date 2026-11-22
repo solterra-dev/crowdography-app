@@ -38,12 +38,16 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
-        UILaunchScreen: {}
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+          UIImageName: LaunchMark
+          UIImageRespectsSafeAreaInsets: true
         UIRequiredDeviceCapabilities: [arm64, still-camera, video-camera, gps]
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIBackgroundModes: [fetch]
         NSCameraUsageDescription: Crowdography films with your camera so your footage can be proven real and untouched.
         NSMicrophoneUsageDescription: Crowdography records sound with your videos.
+        NSPhotoLibraryAddUsageDescription: Crowdography saves a copy of each photo and video you take to your photo library.
         NSLocationWhenInUseUsageDescription: Crowdography stamps where each clip was filmed. The location is part of the proof that your footage is real.
   CrowdographyTests:
     type: bundle.unit-test
