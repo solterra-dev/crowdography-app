@@ -5,7 +5,11 @@ struct UploadsView: View {
     @ObservedObject var queue: UploadQueue
     /// The name on the account, or nil while sign-in is not switched on.
     var author: String?
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
+    @State private var askSignOut = false
+    @State private var signingOut = false
+    @State private var signOutProblem: String?
 
     var body: some View {
         NavigationStack {
@@ -24,10 +28,28 @@ struct UploadsView: View {
             .overlay { if queue.jobs.isEmpty { Text("Nothing filmed yet.").foregroundStyle(.secondary) } }
             .safeAreaInset(edge: .bottom) {
                 if let author {
-                    Text("Filmed by \(author) · name not yet verified")
-                        .font(.footnote).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
-                        .frame(maxWidth: .infinity).padding(.vertical, 8).background(.bar)
+                    VStack(spacing: 6) {
+                        Text("Filmed by \(author) · name not yet verified")
+                            .font(.footnote).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
+                        // Sign out waits until nothing is left to upload, so no footage is stranded without its account.
+                        Button(signingOut ? "Signing out…" : "Sign out") { askSignOut = true }
+                            .font(.footnote).disabled(queue.pendingCount > 0 || signingOut)
+                        if queue.pendingCount > 0 {
+                            Text("You can sign out once everything here has finished uploading.").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        if let signOutProblem { Text(signOutProblem).font(.caption).foregroundStyle(.orange) }
+                    }
+                    .frame(maxWidth: .infinity).padding(.vertical, 8).background(.bar)
                 }
+            }
+            .confirmationDialog("Sign out of Crowdography on this phone?", isPresented: $askSignOut, titleVisibility: .visible) {
+                Button("Sign out", role: .destructive) {
+                    signingOut = true; signOutProblem = nil
+                    Task { signOutProblem = await model.signOut(); signingOut = false }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Your footage stays in your account. Log in again to keep filming.")
             }
             .navigationTitle("Your footage")
             .toolbar {

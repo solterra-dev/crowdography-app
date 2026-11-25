@@ -190,5 +190,12 @@ final class UploadQueue: ObservableObject {
         jobs[i].localCopyRemoved = true
     }
 
+    /// At sign out: drop finished entries whose working copy is already gone, so the next person to sign in on this phone
+    /// does not see them. Anything that still holds a file on the phone stays listed.
+    func forgetFinished() {
+        jobs.removeAll { $0.stage == .verified && $0.localCopyRemoved }
+        save()
+    }
+
     private func save() { CaptureStore.saveJobs(jobs) }
 }

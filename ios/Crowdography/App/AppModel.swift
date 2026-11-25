@@ -63,35 +63,90 @@ final class AppModel: ObservableObject {
         phase = .ready
     }
 
-    // MARK: sign-in by email code
+    // MARK: login (Jeff 2026-11-25): email and password, plus a 6-digit emailed code the first time on each phone
 
-    /// The address the last code went to, while the app waits for the person to type the code.
-    @Published private(set) var codeSentTo: String?
+    enum CodePurpose: String { case create, login, reset }
+    /// Set while the app waits for the 6-digit code: where it was sent and what it is for.
+    struct PendingCode: Equatable { let email: String; let purpose: CodePurpose }
+    @Published private(set) var pendingCode: PendingCode?
     private var signinId: String?
+    /// A new account's password and name wait here, in memory only, until the code is typed. Never saved, never logged.
+    private var heldPassword: String?
+    private var heldName: String?
+    private let notReady = "This phone is not ready yet. Close the app and open it again."
 
-    /// Asks Chronum to email a 6-digit code. Returns what went wrong, or nil.
-    func requestCode(email: String) async -> String? {
-        guard let deviceId, let key else { return "This phone is not ready yet. Close the app and open it again." }
+    /// New account: Chronum checks the name, email and password, then emails a code. Nothing is saved until the code is typed.
+    func createAccount(name: String, email: String, password: String) async -> String? {
+        await askForCode(.create, email: email, password: password, name: name)
+    }
+
+    /// Log in. A phone that already proved this email goes straight in; any other phone is emailed a code first.
+    func logIn(email: String, password: String) async -> String? {
+        await askForCode(.login, email: email, password: password, name: nil)
+    }
+
+    /// Forgotten password: Chronum emails a code. The new password is typed with the code.
+    func startReset(email: String) async -> String? {
+        await askForCode(.reset, email: email, password: nil, name: nil)
+    }
+
+    private func askForCode(_ purpose: CodePurpose, email: String, password: String?, name: String?) async -> String? {
+        guard let deviceId, let key else { return notReady }
+        var body: [String: Any] = ["purpose": purpose.rawValue, "email": email]
+        if let password { body["password"] = password }
+        if let name { body["full_name"] = name }
         do {
-            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/codes", ["email": email], deviceId: deviceId, key: key).body
+            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/codes", body, deviceId: deviceId, key: key).body
+            if (r["signed_in"] as? Bool) == true { await finishSignIn(r); return nil }
             guard let sid = r["signin_id"] as? String else { return "Chronum did not confirm the code was sent. Try again." }
-            signinId = sid; codeSentTo = email
+            signinId = sid
+            heldPassword = purpose == .create ? password : nil
+            heldName = name
+            pendingCode = PendingCode(email: email, purpose: purpose)
             return nil
         } catch { return error.localizedDescription }
     }
 
-    /// Checks the code. On success the phone belongs to the account; the camera opens, or the name step if the account has no name yet.
-    func confirmCode(_ code: String) async -> String? {
-        guard let deviceId, let key, let signinId else { return "Ask for a code first." }
+    /// Checks the code. For a forgotten password, newPassword is the password to use from now on.
+    /// On success the phone belongs to the account and the camera opens.
+    func confirmCode(_ code: String, newPassword: String? = nil) async -> String? {
+        guard let deviceId, let key, let signinId, let pending = pendingCode else { return "Ask for a code first." }
+        var body: [String: Any] = ["signin_id": signinId, "code": code, "email": pending.email]
+        switch pending.purpose {
+        case .create: body["password"] = heldPassword ?? ""; body["full_name"] = heldName ?? ""
+        case .reset: body["password"] = newPassword ?? ""
+        case .login: break
+        }
         do {
-            var body: [String: Any] = ["signin_id": signinId, "code": code]
-            if let codeSentTo { body["email"] = codeSentTo }   // the code proves this address, so the server can keep it with the account
             let r = try await APIClient.shared.postSigned("/v1/crowd/signin/verify", body, deviceId: deviceId, key: key).body
-            self.signinId = nil; codeSentTo = nil
-            authorName = r["name"] as? String
-            if (r["name_required"] as? Bool) == true { phase = .nameStep; return nil }
-            phase = .signingUp
-            await openCamera(began: nil)
+            await finishSignIn(r)
+            return nil
+        } catch { return error.localizedDescription }
+    }
+
+    private func finishSignIn(_ r: [String: Any]) async {
+        forgetCode()
+        authorName = r["name"] as? String
+        if (r["name_required"] as? Bool) == true { phase = .nameStep; return }
+        phase = .signingUp
+        await openCamera(began: nil)
+    }
+
+    /// Leaves the code step and forgets what was typed.
+    func forgetCode() { signinId = nil; pendingCode = nil; heldPassword = nil; heldName = nil }
+
+    /// Signs this phone out. Waits until nothing is being filmed or still uploading, so no footage is left without its account.
+    func signOut() async -> String? {
+        guard let deviceId, let key else { return notReady }
+        if recorder.isRecording { return "Stop filming first." }
+        if queue.pendingCount > 0 { return "Wait until everything has finished uploading, then sign out." }
+        do {
+            _ = try await APIClient.shared.postSigned("/v1/crowd/signout", [:], deviceId: deviceId, key: key)
+            leaveGathering()
+            queue.forgetFinished()
+            recorder.camera.stop()
+            authorName = nil; notice = nil
+            phase = .signIn
             return nil
         } catch { return error.localizedDescription }
     }
@@ -107,8 +162,6 @@ final class AppModel: ObservableObject {
             return nil
         } catch { return error.localizedDescription }
     }
-
-    func useDifferentEmail() { signinId = nil; codeSentTo = nil }
 
     func appBecameActive() { queue.kick() }
 

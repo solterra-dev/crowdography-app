@@ -104,6 +104,11 @@ final class CameraController: NSObject {
         }
     }
 
+    /// Turns the camera off. Used at sign out, so it is not left running behind the log-in screen. configure() turns it back on.
+    func stop() {
+        queue.async { try? ExceptionGuard.run { if self.session.isRunning { self.session.stopRunning() } } }
+    }
+
     func stopPiece() {
         queue.async { try? ExceptionGuard.run { if self.movieOutput.isRecording { self.movieOutput.stopRecording() } } }
     }
