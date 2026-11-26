@@ -28,7 +28,7 @@ struct RootView: View {
         case .nameStep:
             NameView()
         case .ready:
-            CameraScreen(recorder: model.recorder, queue: model.queue)
+            HomeView(library: model.library, queue: model.queue)
         }
     }
 }

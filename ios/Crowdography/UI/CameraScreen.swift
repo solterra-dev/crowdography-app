@@ -6,6 +6,8 @@ struct CameraScreen: View {
     @ObservedObject var queue: UploadQueue
     @State private var showJoin = false
     @State private var showUploads = false
+    @State private var startProblem: String?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -13,18 +15,26 @@ struct CameraScreen: View {
             VStack {
                 topBar
                 Spacer()
+                if let p = startProblem { banner(p) }
                 if let p = recorder.problem { banner(p) }
                 if let n = model.notice { banner(n).onTapGesture { model.notice = nil } }
                 bottomBar
             }
             .padding()
         }
-        .sheet(isPresented: $showJoin) { JoinSheet() }
-        .sheet(isPresented: $showUploads) { UploadsView(queue: queue, author: model.authorName) }
+        .task { startProblem = await model.startCamera() }   // the camera starts when this screen opens, not when the app does
+        .sheet(isPresented: $showJoin) { JoinSheet().environmentObject(model) }
+        .sheet(isPresented: $showUploads) { UploadsView(queue: queue, author: model.authorName).environmentObject(model) }
     }
 
     private var topBar: some View {
         HStack {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark").font(.subheadline.weight(.bold))
+                    .padding(10).background(.ultraThinMaterial, in: Circle())
+            }
+            .disabled(recorder.isRecording)   // stop filming before leaving the camera
+            .accessibilityLabel("Close the camera")
             Button { showJoin = true } label: {
                 Label(model.gatheringName ?? "Filming anywhere", systemImage: model.gatheringName == nil ? "globe" : "person.3")
                     .font(.subheadline.weight(.semibold)).lineLimit(1)

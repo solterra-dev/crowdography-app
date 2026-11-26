@@ -6,6 +6,7 @@ import SwiftUI
 final class AppModel: ObservableObject {
     /// blocked: this phone may not film (failed the genuine-phone check, or the service is not offered here).
     /// problem: something else went wrong; shows a title and the exact reason, with a Try again button.
+    /// ready: signed in; the home screen with the account's footage is showing.
     /// signIn: the phone is genuine but nobody is signed in on it yet.
     /// nameStep: signed in, but the account has no name yet, so footage would have no author.
     enum Phase: Equatable { case starting, signingUp, signIn, nameStep, ready, blocked(String), problem(String, String) }
@@ -18,6 +19,7 @@ final class AppModel: ObservableObject {
 
     let location = LocationProvider()
     let queue = UploadQueue()
+    let library = FootageLibrary()
     lazy var recorder = Recorder(location: location, queue: queue)
     private(set) var deviceId: String?
     private var key: CaptureKey?
@@ -36,7 +38,7 @@ final class AppModel: ObservableObject {
             // Jeff 2026-11-22: every photo and video has a named author, so the account needs a name before filming.
             authorName = s["name"] as? String
             if (s["name_required"] as? Bool) == true { phase = .nameStep; return }
-            await openCamera(began: began)
+            await enterHome(began: began)
         } catch let e as APIError where ["not_genuine", "device_not_allowed", "region_not_served"].contains(e.code) {
             phase = .blocked(e.message)
         } catch let e as DeviceRegistrar.RegistrationError {
@@ -48,19 +50,31 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// The last stretch of getting ready: camera, photo-library permission, then the camera screen.
-    private func openCamera(began: Date?) async {
+    /// Signed in and named: show the home screen with the account's footage (Jeff 2026-11-25).
+    /// The camera is not started here. It opens only when the person taps Film.
+    private func enterHome(began: Date?) async {
         guard let id = deviceId, let k = key else { return }
-        do { try await recorder.camera.configure() }
-        catch { phase = .problem("The camera could not start", error.localizedDescription); return }
-        await PhotoLibrarySaver.requestAccess()   // add-only; filming works either way
         if let began {   // keep the opening screen up long enough to be seen
             let shown = Date().timeIntervalSince(began)
             if shown < 1.2 { try? await Task.sleep(nanoseconds: UInt64((1.2 - shown) * 1_000_000_000)) }
         }
-        queue.attach(deviceId: id, key: k)
-        recorder.attach(deviceId: id, key: k)
+        queue.attach(deviceId: id, key: k)     // uploads that were not finished carry on
+        library.attach(deviceId: id, key: k)
         phase = .ready
+    }
+
+    /// Starts the camera when the camera screen opens. Returns what went wrong, or nil.
+    func startCamera() async -> String? {
+        guard let id = deviceId, let k = key else { return notReady }
+        do { try await recorder.camera.configure() } catch { return error.localizedDescription }
+        await PhotoLibrarySaver.requestAccess()   // add-only; filming works either way
+        recorder.attach(deviceId: id, key: k)
+        return nil
+    }
+
+    /// Turns the camera off when the person leaves the camera screen.
+    func closeCamera() {
+        if !recorder.isRecording { recorder.camera.stop() }
     }
 
     // MARK: login (Jeff 2026-11-25): email and password, plus a 6-digit emailed code the first time on each phone
@@ -108,7 +122,7 @@ final class AppModel: ObservableObject {
     }
 
     /// Checks the code. For a forgotten password, newPassword is the password to use from now on.
-    /// On success the phone belongs to the account and the camera opens.
+    /// On success the phone belongs to the account and the home screen opens.
     func confirmCode(_ code: String, newPassword: String? = nil) async -> String? {
         guard let deviceId, let key, let signinId, let pending = pendingCode else { return "Ask for a code first." }
         var body: [String: Any] = ["signin_id": signinId, "code": code, "email": pending.email]
@@ -129,7 +143,7 @@ final class AppModel: ObservableObject {
         authorName = r["name"] as? String
         if (r["name_required"] as? Bool) == true { phase = .nameStep; return }
         phase = .signingUp
-        await openCamera(began: nil)
+        await enterHome(began: nil)
     }
 
     /// Leaves the code step and forgets what was typed.
@@ -144,6 +158,7 @@ final class AppModel: ObservableObject {
             _ = try await APIClient.shared.postSigned("/v1/crowd/signout", [:], deviceId: deviceId, key: key)
             leaveGathering()
             queue.forgetFinished()
+            library.clear()
             recorder.camera.stop()
             authorName = nil; notice = nil
             phase = .signIn
@@ -151,14 +166,14 @@ final class AppModel: ObservableObject {
         } catch { return error.localizedDescription }
     }
 
-    /// Saves the name footage is credited to, then opens the camera. Returns what went wrong, or nil.
+    /// Saves the name footage is credited to, then opens the home screen. Returns what went wrong, or nil.
     func saveName(_ name: String) async -> String? {
         guard let deviceId, let key else { return "This phone is not ready yet. Close the app and open it again." }
         do {
             let r = try await APIClient.shared.postSigned("/v1/crowd/account/profile", ["full_name": name], deviceId: deviceId, key: key).body
             authorName = r["name"] as? String ?? name
             phase = .signingUp
-            await openCamera(began: nil)
+            await enterHome(began: nil)
             return nil
         } catch { return error.localizedDescription }
     }

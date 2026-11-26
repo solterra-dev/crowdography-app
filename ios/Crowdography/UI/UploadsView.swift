@@ -25,7 +25,7 @@ struct UploadsView: View {
                     if let p = job.lastProblem { Text(p).font(.caption).foregroundStyle(.orange) }
                 }
             }
-            .overlay { if queue.jobs.isEmpty { Text("Nothing filmed yet.").foregroundStyle(.secondary) } }
+            .overlay { if queue.jobs.isEmpty { Text("Nothing here. Finished clips are under Your footage.").foregroundStyle(.secondary) } }
             .safeAreaInset(edge: .bottom) {
                 if let author {
                     VStack(spacing: 6) {
@@ -51,7 +51,7 @@ struct UploadsView: View {
             } message: {
                 Text("Your footage stays in your account. Log in again to keep filming.")
             }
-            .navigationTitle("Your footage")
+            .navigationTitle("Uploads from this phone")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Retry") { queue.kick() } }
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
