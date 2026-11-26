@@ -13,6 +13,8 @@ final class AppModel: ObservableObject {
     @Published private(set) var phase: Phase = .starting
     /// The name footage from this account is credited to. Self-declared: nothing has checked it yet.
     @Published private(set) var authorName: String?
+    /// True when the server can text codes, so a mobile number works as a login (Jeff 2026-11-25).
+    @Published private(set) var phoneLoginOn = false
     @Published private(set) var gatheringName: String?
     @Published private(set) var hostSeesOriginals = false
     @Published var notice: String?
@@ -34,6 +36,7 @@ final class AppModel: ObservableObject {
             key = k; deviceId = id
             // Jeff 2026-11-21: sign in before filming. The server says whether this phone is signed in and whether sign-in is switched on.
             let s = try await APIClient.shared.postSigned("/v1/crowd/session", [:], deviceId: id, key: k).body
+            phoneLoginOn = (s["phone_login"] as? Bool) == true
             if (s["signed_in"] as? Bool) != true && (s["sign_in_required"] as? Bool) == true { phase = .signIn; return }
             // Jeff 2026-11-22: every photo and video has a named author, so the account needs a name before filming.
             authorName = s["name"] as? String
@@ -77,11 +80,11 @@ final class AppModel: ObservableObject {
         if !recorder.isRecording { recorder.camera.stop() }
     }
 
-    // MARK: login (Jeff 2026-11-25): email and password, plus a 6-digit emailed code the first time on each phone
+    // MARK: login (Jeff 2026-11-25): an email address or mobile number and a password, plus a 6-digit code the first time on each phone
 
     enum CodePurpose: String { case create, login, reset }
-    /// Set while the app waits for the 6-digit code: where it was sent and what it is for.
-    struct PendingCode: Equatable { let email: String; let purpose: CodePurpose }
+    /// Set while the app waits for the 6-digit code: where it was sent (by email or by text) and what it is for.
+    struct PendingCode: Equatable { let login: LoginName; let purpose: CodePurpose }
     @Published private(set) var pendingCode: PendingCode?
     private var signinId: String?
     /// A new account's password and name wait here, in memory only, until the code is typed. Never saved, never logged.
@@ -89,24 +92,24 @@ final class AppModel: ObservableObject {
     private var heldName: String?
     private let notReady = "This phone is not ready yet. Close the app and open it again."
 
-    /// New account: Chronum checks the name, email and password, then emails a code. Nothing is saved until the code is typed.
-    func createAccount(name: String, email: String, password: String) async -> String? {
-        await askForCode(.create, email: email, password: password, name: name)
+    /// New account: Chronum checks the name, login and password, then sends a code. Nothing is saved until the code is typed.
+    func createAccount(name: String, login: LoginName, password: String) async -> String? {
+        await askForCode(.create, login: login, password: password, name: name)
     }
 
-    /// Log in. A phone that already proved this email goes straight in; any other phone is emailed a code first.
-    func logIn(email: String, password: String) async -> String? {
-        await askForCode(.login, email: email, password: password, name: nil)
+    /// Log in. A phone that already proved this login goes straight in; any other phone is sent a code first.
+    func logIn(login: LoginName, password: String) async -> String? {
+        await askForCode(.login, login: login, password: password, name: nil)
     }
 
-    /// Forgotten password: Chronum emails a code. The new password is typed with the code.
-    func startReset(email: String) async -> String? {
-        await askForCode(.reset, email: email, password: nil, name: nil)
+    /// Forgotten password: Chronum sends a code. The new password is typed with the code.
+    func startReset(login: LoginName) async -> String? {
+        await askForCode(.reset, login: login, password: nil, name: nil)
     }
 
-    private func askForCode(_ purpose: CodePurpose, email: String, password: String?, name: String?) async -> String? {
+    private func askForCode(_ purpose: CodePurpose, login: LoginName, password: String?, name: String?) async -> String? {
         guard let deviceId, let key else { return notReady }
-        var body: [String: Any] = ["purpose": purpose.rawValue, "email": email]
+        var body: [String: Any] = ["purpose": purpose.rawValue, login.field: login.value]
         if let password { body["password"] = password }
         if let name { body["full_name"] = name }
         do {
@@ -116,7 +119,7 @@ final class AppModel: ObservableObject {
             signinId = sid
             heldPassword = purpose == .create ? password : nil
             heldName = name
-            pendingCode = PendingCode(email: email, purpose: purpose)
+            pendingCode = PendingCode(login: login, purpose: purpose)
             return nil
         } catch { return error.localizedDescription }
     }
@@ -125,7 +128,7 @@ final class AppModel: ObservableObject {
     /// On success the phone belongs to the account and the home screen opens.
     func confirmCode(_ code: String, newPassword: String? = nil) async -> String? {
         guard let deviceId, let key, let signinId, let pending = pendingCode else { return "Ask for a code first." }
-        var body: [String: Any] = ["signin_id": signinId, "code": code, "email": pending.email]
+        var body: [String: Any] = ["signin_id": signinId, "code": code, pending.login.field: pending.login.value]
         switch pending.purpose {
         case .create: body["password"] = heldPassword ?? ""; body["full_name"] = heldName ?? ""
         case .reset: body["password"] = newPassword ?? ""

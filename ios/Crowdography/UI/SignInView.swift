@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// The way in (Jeff 2026-11-25): log in with an email and password, create an account, or reset a forgotten password.
-/// The first time an account is used on a phone, Chronum emails a 6-digit code to prove the email address is real.
+/// The way in (Jeff 2026-11-25): log in with an email address or mobile number and a password, create an account, or reset
+/// a forgotten password. The first time an account is used on a phone, Chronum sends a 6-digit code, by email or by text,
+/// to prove the address or number is real. Mobile numbers work only once the server has texting switched on.
 /// The code only works on this phone, once, for 10 minutes. The password is never saved or logged by the app.
 struct SignInView: View {
     private enum Mode { case logIn, create, forgot }
@@ -16,7 +17,8 @@ struct SignInView: View {
     @State private var busy = false
     @State private var problem: String?
 
-    private var cleanEmail: String { email.trimmingCharacters(in: .whitespacesAndNewlines) }
+    /// What was typed in the login field, when it is a usable email address or mobile number.
+    private var login: LoginName? { LoginName.parse(email, phoneAllowed: model.phoneLoginOn) }
 
     var body: some View {
         ZStack {
@@ -44,9 +46,9 @@ struct SignInView: View {
             emailField
             SecureField("Password", text: $password).textContentType(.password).modifier(FieldLook())
             Button(busy ? "Logging in…" : "Log in") {
-                run { await model.logIn(email: cleanEmail, password: password) }
+                if let login { run { await model.logIn(login: login, password: password) } }
             }
-            .buttonStyle(.borderedProminent).disabled(!cleanEmail.contains("@") || password.isEmpty || busy)
+            .buttonStyle(.borderedProminent).disabled(login == nil || password.isEmpty || busy)
             link("Create an account") { mode = .create }
             link("Forgot your password") { mode = .forgot }
         case .create:
@@ -59,21 +61,21 @@ struct SignInView: View {
                 .font(.caption).foregroundStyle(.white.opacity(0.55))
             Button(busy ? "Checking…" : "Create account") { create() }
                 .buttonStyle(.borderedProminent)
-                .disabled(PersonName.tidy(name) == nil || !cleanEmail.contains("@") || password.isEmpty || busy)
+                .disabled(PersonName.tidy(name) == nil || login == nil || password.isEmpty || busy)
             link("I already have an account") { mode = .logIn }
         case .forgot:
-            heading("Reset your password", "We email a 6-digit code to your address. Type it here with a new password.")
+            heading("Reset your password", model.phoneLoginOn ? "We send a 6-digit code to your email address or mobile number. Type it here with a new password." : "We email a 6-digit code to your address. Type it here with a new password.")
             emailField
-            Button(busy ? "Sending…" : "Email me a code") {
-                run { await model.startReset(email: cleanEmail) }
+            Button(busy ? "Sending…" : "Send me a code") {
+                if let login { run { await model.startReset(login: login) } }
             }
-            .buttonStyle(.borderedProminent).disabled(!cleanEmail.contains("@") || busy)
+            .buttonStyle(.borderedProminent).disabled(login == nil || busy)
             link("Back to log in") { mode = .logIn }
         }
     }
 
     private var emailField: some View {
-        TextField("Email address", text: $email)
+        TextField(model.phoneLoginOn ? "Email or mobile number" : "Email address", text: $email)
             .keyboardType(.emailAddress).textContentType(.username)
             .textInputAutocapitalization(.never).autocorrectionDisabled().modifier(FieldLook())
     }
@@ -81,10 +83,12 @@ struct SignInView: View {
     // MARK: the code step
 
     @ViewBuilder private func codeStep(_ pending: AppModel.PendingCode) -> some View {
+        let title = pending.login.isPhone ? "Check your texts" : "Check your email"
+        let sent = (pending.login.isPhone ? "We texted" : "We sent") + " a 6-digit code to \(pending.login.shown)."
         switch pending.purpose {
-        case .create: heading("Check your email", "We sent a 6-digit code to \(pending.email). Type it to finish creating your account.")
-        case .login: heading("Check your email", "This is the first time your account is used on this phone, so we sent a 6-digit code to \(pending.email).")
-        case .reset: heading("Check your email", "We sent a 6-digit code to \(pending.email). Type it with your new password.")
+        case .create: heading(title, sent + " Type it to finish creating your account.")
+        case .login: heading(title, "This is the first time your account is used on this phone. " + sent)
+        case .reset: heading(title, sent + " Type it with your new password.")
         }
         TextField("6-digit code", text: $code)
             .keyboardType(.numberPad).textContentType(.oneTimeCode)
@@ -103,13 +107,13 @@ struct SignInView: View {
     // MARK: actions
 
     private func create() {
-        if let wrong = PasswordRule.problem(password, email: cleanEmail) { problem = wrong; return }
-        guard let tidy = PersonName.tidy(name) else { return }
-        run { await model.createAccount(name: tidy, email: cleanEmail, password: password) }
+        guard let login, let tidy = PersonName.tidy(name) else { return }
+        if let wrong = PasswordRule.problem(password, email: login.passwordMustNotBe) { problem = wrong; return }
+        run { await model.createAccount(name: tidy, login: login, password: password) }
     }
 
     private func confirm(_ pending: AppModel.PendingCode) {
-        if pending.purpose == .reset, let wrong = PasswordRule.problem(newPassword, email: pending.email) { problem = wrong; return }
+        if pending.purpose == .reset, let wrong = PasswordRule.problem(newPassword, email: pending.login.passwordMustNotBe) { problem = wrong; return }
         run { await model.confirmCode(code, newPassword: pending.purpose == .reset ? newPassword : nil) }
     }
 
