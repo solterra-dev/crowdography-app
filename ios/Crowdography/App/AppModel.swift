@@ -16,6 +16,8 @@ final class AppModel: ObservableObject {
     /// True when the server can text codes, so a mobile number works as a login (Jeff 2026-11-25).
     @Published private(set) var phoneLoginOn = false
     @Published private(set) var gatheringName: String?
+    /// The group new footage is filmed into, or nil to film anywhere.
+    @Published private(set) var currentGroupId: String?
     @Published private(set) var hostSeesOriginals = false
     @Published var notice: String?
 
@@ -190,6 +192,7 @@ final class AppModel: ObservableObject {
             let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/join", ["join_code": code.uppercased()], deviceId: deviceId, key: key).body
             guard let gid = r["gathering_id"] as? String else { return }
             gatheringName = r["gathering_name"] as? String
+            currentGroupId = gid
             hostSeesOriginals = r["host_sees_originals"] as? Bool ?? false
             notice = r["notice"] as? String
             recorder.gatheringChanged(gid)
@@ -200,7 +203,59 @@ final class AppModel: ObservableObject {
 
     func leaveGathering() {
         gatheringName = nil
+        currentGroupId = nil
         hostSeesOriginals = false
         recorder.gatheringChanged(nil)
     }
+
+    // MARK: groups (Jeff 2026-11-26: a group code, then every angle of the same moment)
+
+    struct StartedGroup: Identifiable { let id: String; let name: String; let code: String }
+
+    /// Starts a group around where this phone is now, lasting `hours`, and films into it from now on. The code is shown to share.
+    func startGroup(name: String, hours: Int) async throws -> StartedGroup {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        guard let fix = location.currentFix else {
+            throw APIError(status: 0, code: "no_location", message: "Waiting for your location. Make sure Crowdography may use your location, then try again.")
+        }
+        let iso = ISO8601DateFormatter()
+        let body: [String: Any] = ["gathering_name": name, "gathering_kind": "public_gathering",
+                                   "starts_at": iso.string(from: Date().addingTimeInterval(-60)), "ends_at": iso.string(from: Date().addingTimeInterval(Double(hours) * 3600)),
+                                   "area_lat": fix.coordinate.latitude, "area_lng": fix.coordinate.longitude, "area_radius_m": 5000]
+        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings", body, deviceId: deviceId, key: key).body
+        guard let gid = r["gathering_id"] as? String, let code = r["join_code"] as? String else {
+            throw APIError(status: 0, code: "no_group", message: "Chronum did not confirm the group. Try again.")
+        }
+        gatheringName = name; currentGroupId = gid; hostSeesOriginals = false; notice = nil
+        recorder.gatheringChanged(gid)
+        return StartedGroup(id: gid, name: name, code: code)
+    }
+
+    /// Films into one of your groups from now on.
+    func useGroup(_ g: GroupSummary) {
+        gatheringName = g.name; currentGroupId = g.id; hostSeesOriginals = !g.isHost
+        recorder.gatheringChanged(g.id)
+    }
+
+    func myGroups() async throws -> [GroupSummary] {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/mine", [:], deviceId: deviceId, key: key).body
+        return (r["groups"] as? [[String: Any]] ?? []).compactMap(GroupSummary.init)
+    }
+
+    /// Every angle in a group, in the order they started.
+    func groupFootage(_ id: String) async throws -> (group: GroupSummary?, clips: [GroupClip]) {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/footage", ["gathering_id": id], deviceId: deviceId, key: key).body
+        return ((r["group"] as? [String: Any]).flatMap(GroupSummary.init), (r["items"] as? [[String: Any]] ?? []).compactMap(GroupClip.init))
+    }
+
+    /// A fresh private link to one angle in a group.
+    func groupLink(_ captureId: String) async throws -> URL {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/view", ["capture_id": captureId], deviceId: deviceId, key: key).body
+        guard let u = (r["url"] as? String).flatMap({ URL(string: $0) }) else { throw APIError(status: 0, code: "no_link", message: "Chronum did not give a link to that angle.") }
+        return u
+    }
 }
+

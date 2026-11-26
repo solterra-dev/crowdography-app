@@ -7,7 +7,7 @@ struct HomeView: View {
     @ObservedObject var library: FootageLibrary
     @ObservedObject var queue: UploadQueue
     @State private var showCamera = false
-    @State private var showJoin = false
+    @State private var showGroups = false
     @State private var showUploads = false
     @State private var viewing: FootageItem?
     @State private var askSignOut = false
@@ -40,10 +40,12 @@ struct HomeView: View {
             .refreshable { await library.reload() }
             .navigationTitle("Your footage")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showGroups = true } label: { Label("Groups", systemImage: "person.3") }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Section(model.authorName ?? "Account") {
-                            Button { showJoin = true } label: { Label(model.gatheringName ?? "Join a gathering", systemImage: "person.3") }
                             Button { showUploads = true } label: { Label("Uploads from this phone", systemImage: "arrow.up.circle") }
                         }
                         Section {
@@ -63,7 +65,7 @@ struct HomeView: View {
             CameraScreen(recorder: model.recorder, queue: model.queue).environmentObject(model)
         }
         .sheet(item: $viewing) { FootageViewer(item: $0, library: library) }
-        .sheet(isPresented: $showJoin) { JoinSheet().environmentObject(model) }
+        .sheet(isPresented: $showGroups) { GroupsView().environmentObject(model) }
         .sheet(isPresented: $showUploads) { UploadsView(queue: queue, author: model.authorName).environmentObject(model) }
         .confirmationDialog("Sign out of Crowdography on this phone?", isPresented: $askSignOut, titleVisibility: .visible) {
             Button("Sign out", role: .destructive) { Task { signOutProblem = await model.signOut() } }
@@ -93,10 +95,16 @@ struct HomeView: View {
     }
 
     private var filmButton: some View {
-        Button { showCamera = true } label: {
-            Label("Film", systemImage: "video.fill").font(.headline).foregroundStyle(.white)
-                .padding(.horizontal, 34).padding(.vertical, 16).background(Color.red, in: Capsule())
-                .shadow(color: .black.opacity(0.5), radius: 8, y: 3)
+        VStack(spacing: 6) {
+            if let g = model.gatheringName {
+                Text("Filming into \(g)").font(.caption.weight(.semibold)).lineLimit(1)
+                    .padding(.horizontal, 10).padding(.vertical, 4).background(.ultraThinMaterial, in: Capsule())
+            }
+            Button { showCamera = true } label: {
+                Label("Film", systemImage: "video.fill").font(.headline).foregroundStyle(.white)
+                    .padding(.horizontal, 34).padding(.vertical, 16).background(Color.red, in: Capsule())
+                    .shadow(color: .black.opacity(0.5), radius: 8, y: 3)
+            }
         }
         .padding(.bottom, 12)
         .accessibilityLabel("Film a video or take a photo")
