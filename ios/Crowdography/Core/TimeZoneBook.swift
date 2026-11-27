@@ -13,7 +13,7 @@ final class TimeZoneBook {
     private var chain: Task<Void, Never>?
 
     /// About 5 kilometers: close enough that two places in one square share a zone, except right on a line.
-    static func key(lat: Double, lng: Double) -> String { String(format: "%.2f,%.2f", (lat * 20).rounded() / 20, (lng * 20).rounded() / 20) }
+    nonisolated static func key(lat: Double, lng: Double) -> String { String(format: "%.2f,%.2f", (lat * 20).rounded() / 20, (lng * 20).rounded() / 20) }
 
     func cached(lat: Double, lng: Double) -> TimeZone? { known[Self.key(lat: lat, lng: lng)] }
 
