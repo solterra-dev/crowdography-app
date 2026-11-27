@@ -1,240 +1,155 @@
-commit 52f3fc6d3376085924e5c49198193294be8eee8a  Xcode 26.6  result success  Fri Nov 27 02:02:48 UTC 2026
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (2.847 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.001 seconds).
-	 Executed 4 tests, with 0 failures (0 unexpected) in 2.851 (2.854) seconds
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (0.023 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.001 seconds).
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.030 (0.033) seconds
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' passed (0.001 seconds).
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' passed (0.001 seconds).
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.061) seconds
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' passed (0.001 seconds).
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.009 (0.048) seconds
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' started.
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.003 seconds).
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' started.
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' started.
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (1.127 seconds).
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' started.
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (2.731 seconds).
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' started.
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.006 seconds).
-Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' started.
-Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' started.
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' started.
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.005 seconds).
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' started.
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.001 seconds).
-	 Executed 9 tests, with 0 failures (0 unexpected) in 3.878 (3.881) seconds
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.033 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.001 seconds).
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.037 (0.038) seconds
-	 Executed 39 tests, with 0 failures (0 unexpected) in 6.817 (7.102) seconds
-	 Executed 39 tests, with 0 failures (0 unexpected) in 6.817 (7.105) seconds
-** TEST SUCCEEDED **
+commit 6e1f812ea34121cf8d198f08f193a50caccb7086  Xcode 26.6  result failure  Fri Nov 27 02:52:21 UTC 2026
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:94:19: error: heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
+** TEST FAILED **
 ---
-ExtractAppIntentsMetadata (in target 'CrowdographyTests' from project 'Crowdography')
-    cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.wHPc1b/Metal.xctoolchain --module-name CrowdographyTests --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier com.crowdography.app.tests --output /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest/CrowdographyTests --dependency-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/Objects-normal/arm64/CrowdographyTests_dependency_info.dat --stringsdata-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/Objects-normal/arm64/CrowdographyTests.SwiftFileList --metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/CrowdographyTests.DependencyMetadataFileList --static-metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/CrowdographyTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/Objects-normal/arm64/CrowdographyTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
-2026-11-27 02:00:32.487 appintentsmetadataprocessor[3442:14159] Starting appintentsmetadataprocessor export
-2026-11-27 02:00:32.488 appintentsmetadataprocessor[3442:14159] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:9:13: note: class 'CameraController' does not conform to the 'Sendable' protocol
+final class CameraController: NSObject {
+            ^
 
-AppIntentsSSUTraining (in target 'CrowdographyTests' from project 'Crowdography')
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/DeviceRegistrar.swift (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest/Info.plist --temp-dir-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/ssu --bundle-id com.crowdography.app.tests --product-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest --extracted-metadata-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest/Metadata.appintents --metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/CrowdographyTests.build/CrowdographyTests.DependencyMetadataFileList --source-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest/Info.plist --archive-ssu-assets
-2026-11-27 02:00:32.504 appintentsnltrainingprocessor[3443:14160] Parsing options for appintentsnltrainingprocessor
-2026-11-27 02:00:32.504 appintentsnltrainingprocessor[3443:14160] Starting AppIntents SSU YAML Generation
-2026-11-27 02:00:32.504 appintentsnltrainingprocessor[3443:14160] No AppShortcuts found - Skipping.
+    
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:49:26: warning: capture of 'self' with non-Sendable type 'CameraController' in a '@Sendable' closure
+                do { try self.configureOnQueue(); c.resume() } catch { c.resume(throwing: error) }
+                         ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:9:13: note: class 'CameraController' does not conform to the 'Sendable' protocol
+final class CameraController: NSObject {
+            ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:171:40: warning: capture of 'self' with non-Sendable type 'CameraController' in a '@Sendable' closure
+                        let settings = self.photoOutput.availablePhotoCodecTypes.contains(.hevc)
+                                       ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:9:13: note: class 'CameraController' does not conform to the 'Sendable' protocol
+final class CameraController: NSObject {
+            ^
 
-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest (in target 'CrowdographyTests' from project 'Crowdography')
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/ExceptionGuard.swift (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    builtin-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest
+    
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:49:26: warning: capture of 'self' with non-Sendable type 'CameraController' in a '@Sendable' closure
+                do { try self.configureOnQueue(); c.resume() } catch { c.resume(throwing: error) }
+                         ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:9:13: note: class 'CameraController' does not conform to the 'Sendable' protocol
+final class CameraController: NSObject {
+            ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:171:40: warning: capture of 'self' with non-Sendable type 'CameraController' in a '@Sendable' closure
+                        let settings = self.photoOutput.availablePhotoCodecTypes.contains(.hevc)
+                                       ^
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift:9:13: note: class 'CameraController' does not conform to the 'Sendable' protocol
+final class CameraController: NSObject {
+            ^
 
-Touch /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest (in target 'CrowdographyTests' from project 'Crowdography')
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Crowdography (in target 'Crowdography' from project 'Crowdography')
+
+EmitSwiftModule normal arm64 (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    /usr/bin/touch -c /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app/PlugIns/CrowdographyTests.xctest
+    
 
-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+SwiftCompile normal arm64 Compiling\ NameView.swift,\ PasswordRule.swift,\ PathRecorder.swift,\ PersonName.swift,\ PhotoLibrarySaver.swift,\ Recorder.swift,\ RootView.swift,\ SignInView.swift,\ Statement.swift,\ StripFrame.swift,\ TimeZoneBook.swift,\ UploadQueue.swift,\ UploadsView.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/NameView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PasswordRule.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PersonName.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PhotoLibrarySaver.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/Recorder.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/RootView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/SignInView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Statement.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/StripFrame.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/TimeZoneBook.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/UploadQueue.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/UploadsView.swift /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Crowdography' from project 'Crowdography')
+Failed frontend command:
+/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/APIClient.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/App/AppModel.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/BackgroundUploader.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/CameraController.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/CameraPath.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/CameraPreview.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/CameraScreen.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/CaptureJob.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/CaptureKey.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/ClockCheck.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Config.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/CopyMaker.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/App/CrowdographyApp.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/DeviceRegistrar.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/ExceptionGuard.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Footage/FootageItem.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Footage/FootageLibrary.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/FootageViewer.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/GroupMapView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/GroupModels.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/GroupWatchView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/GroupsView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Hex.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/HomeView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/JoinSheet.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Keychain.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/LocationProvider.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/LoginName.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/MultiviewView.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/NameView.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PasswordRule.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PersonName.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PhotoLibrarySaver.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/Recorder.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/RootView.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/SignInView.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Statement.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/StripFrame.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/TimeZoneBook.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/UploadQueue.swift -primary-file /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/UploadsView.swift -primary-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/supplementaryOutputs-3 -target arm64-apple-ios17.0-simulator -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -disable-cross-import-overlay-search -swift-module-cross-import AVKit /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/AVKit.framework/Modules/AVKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AVKit /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/System/Library/Frameworks/AVKit.framework/Modules/AVKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import MapKit /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/MapKit.framework/Modules/MapKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -load-resolved-plugin /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libTipKitMacros.dylib\#/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#TipKitMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography-dependencies-1.json -debug-module-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography.swiftmodule -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -I /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/crowdography-app/crowdography-app/ios -enable-anonymous-context-mangled-names -file-compilation-dir /Users/runner/work/crowdography-app/crowdography-app/ios -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources -Xcc -DDEBUG\=1 -import-objc-header /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography-primary-Bridging-header.pch -no-auto-bridging-header-chaining -module-name Crowdography -frontend-parseable-output -disable-clang-spi -clang-target arm64-apple-ios26.5-simulator -target-sdk-version 26.5 -target-sdk-name iphonesimulator26.5 -in-process-plugin-server-path /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/NameView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PasswordRule.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PathRecorder.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PersonName.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PhotoLibrarySaver.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Recorder.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/RootView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/SignInView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Statement.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/StripFrame.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/TimeZoneBook.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/UploadQueue.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/UploadsView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/NameView.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PasswordRule.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PathRecorder.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PersonName.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/PhotoLibrarySaver.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Recorder.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/RootView.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/SignInView.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Statement.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/StripFrame.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/TimeZoneBook.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/UploadQueue.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/UploadsView.o -index-unit-output-path /Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/NameView.swift (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    builtin-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app
+    
 
-Validate /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PasswordRule.swift (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    builtin-validationUtility /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app -shallow-bundle -infoplist-subpath Info.plist
+    
 
-Touch /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift (in target 'Crowdography' from project 'Crowdography')
     cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    /usr/bin/touch -c /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app
+    
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:94:19: error: heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+        let row = [bootMs + m.timestamp * 1000, northKnown ? a.azimuth : -1, a.pitch, q.x, q.y, q.z, q.w,
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:29: warning: expression implicitly coerced from 'CLLocationDirection?' (aka 'Optional<Double>') to 'Any'
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: provide a default value to avoid this warning
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+                                                               ?? <#default value#>
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: force-unwrap the value to avoid this warning
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+                                                              !
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: explicitly cast to 'Any' with 'as Any' to silence this warning
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+                                                               as Any
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
+        for s in segments.values { s.aim.append(row) }
+                                                ^
+                                                    as! [Double]
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: note: arguments to generic parameter 'Element' ('Any' and 'Double') are expected to be equal
+        for s in segments.values { s.aim.append(row) }
+                                                ^
 
-2026-11-27 02:02:32.998254+0000 Crowdography[4078:19264] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
-2026-11-27 02:02:33.088674+0000 Crowdography[4078:19264] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
-Test Suite 'All tests' started at 2026-11-27 02:02:35.089.
-Test Suite 'CrowdographyTests.xctest' started at 2026-11-27 02:02:35.090.
-Test Suite 'FootageItemTests' started at 2026-11-27 02:02:35.090.
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (2.847 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.001 seconds).
-Test Suite 'FootageItemTests' passed at 2026-11-27 02:02:37.944.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 2.851 (2.854) seconds
-Test Suite 'GroupTimelineTests' started at 2026-11-27 02:02:37.944.
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (0.023 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.001 seconds).
-Test Suite 'GroupTimelineTests' passed at 2026-11-27 02:02:37.977.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.030 (0.033) seconds
-Test Suite 'LoginNameTests' started at 2026-11-27 02:02:38.152.
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' passed (0.001 seconds).
-Test Suite 'LoginNameTests' passed at 2026-11-27 02:02:38.162.
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
-Test Suite 'PasswordRuleTests' started at 2026-11-27 02:02:38.162.
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' passed (0.001 seconds).
-Test Suite 'PasswordRuleTests' passed at 2026-11-27 02:02:38.223.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.061) seconds
-Test Suite 'PersonNameTests' started at 2026-11-27 02:02:38.224.
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' passed (0.002 seconds).
-Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' passed (0.001 seconds).
-Test Suite 'PersonNameTests' passed at 2026-11-27 02:02:38.272.
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.009 (0.048) seconds
-Test Suite 'StatementTests' started at 2026-11-27 02:02:38.272.
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' started.
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.003 seconds).
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' started.
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.004 seconds).
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' started.
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (1.127 seconds).
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' started.
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (2.731 seconds).
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' started.
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.006 seconds).
-Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' started.
-Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' started.
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' started.
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.005 seconds).
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' started.
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.001 seconds).
-Test Suite 'StatementTests' passed at 2026-11-27 02:02:42.153.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 3.878 (3.881) seconds
-Test Suite 'ViewingCopyTests' started at 2026-11-27 02:02:42.153.
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.033 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.001 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.000 seconds).
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.001 seconds).
-Test Suite 'ViewingCopyTests' passed at 2026-11-27 02:02:42.192.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.037 (0.038) seconds
-Test Suite 'CrowdographyTests.xctest' passed at 2026-11-27 02:02:42.192.
-	 Executed 39 tests, with 0 failures (0 unexpected) in 6.817 (7.102) seconds
-Test Suite 'All tests' passed at 2026-11-27 02:02:42.194.
-	 Executed 39 tests, with 0 failures (0 unexpected) in 6.817 (7.105) seconds
-2026-11-27 02:02:42.959 xcodebuild[2322:10925] [MT] IDETestOperationsObserverDebug: 130.350 elapsed -- Testing started completed.
-2026-11-27 02:02:42.959 xcodebuild[2322:10925] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-11-27 02:02:42.959 xcodebuild[2322:10925] [MT] IDETestOperationsObserverDebug: 130.350 sec, +130.350 sec -- end
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PersonName.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PhotoLibrarySaver.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/Recorder.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/RootView.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/SignInView.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Statement.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/StripFrame.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/TimeZoneBook.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/UploadQueue.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/UploadsView.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Crowdography (in target 'Crowdography' from project 'Crowdography')
+
+SwiftDriver\ Compilation\ Requirements Crowdography normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Crowdography -Onone @/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Crowdography-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/Objects-normal/arm64/Crowdography-Swift.h -import-objc-header /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Support/Crowdography-Bridging-Header.h -working-directory /Users/runner/work/crowdography-app/crowdography-app/ios -experimental-emit-module-separately -disable-cmo
+
 
 Test session results, code coverage, and logs:
-	/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Logs/Test/Test-Crowdography-2026.11.27_02-00-00-+0000.xcresult
+	/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Logs/Test/Test-Crowdography-2026.11.27_02-51-53-+0000.xcresult
 
-** TEST SUCCEEDED **
+Testing failed:
+	Heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+	Cannot convert value of type '[Any]' to expected argument type '[Double]'
+	Testing cancelled because the build failed.
 
-Testing started
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ NameView.swift,\ PasswordRule.swift,\ PathRecorder.swift,\ PersonName.swift,\ PhotoLibrarySaver.swift,\ Recorder.swift,\ RootView.swift,\ SignInView.swift,\ Statement.swift,\ StripFrame.swift,\ TimeZoneBook.swift,\ UploadQueue.swift,\ UploadsView.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/NameView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PasswordRule.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/PersonName.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PhotoLibrarySaver.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/Recorder.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/RootView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/SignInView.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/Statement.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/StripFrame.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Core/TimeZoneBook.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Upload/UploadQueue.swift /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/UI/UploadsView.swift /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/Crowdography.build/Debug-iphonesimulator/Crowdography.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Crowdography' from project 'Crowdography')
+	SwiftCompile normal arm64 /Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift (in target 'Crowdography' from project 'Crowdography')
+	Testing project Crowdography with scheme Crowdography
+(3 failures)
