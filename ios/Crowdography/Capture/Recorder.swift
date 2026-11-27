@@ -7,7 +7,9 @@ import Foundation
 final class Recorder: ObservableObject {
     enum Mode: String { case video, photo }
     @Published var mode: Mode = .video
-    @Published private(set) var isRecording = false { didSet { queue.copiesOnHold = isRecording } }   // build 20: no copies made while filming
+    @Published private(set) var isRecording = false {
+        didSet { queue.copiesOnHold = isRecording; if isRecording { location.startHeading() } else { location.stopHeading() } }
+    }   // build 20: no copies made while filming; build 21: the compass runs only while filming   // build 20: no copies made while filming
     @Published private(set) var pieceNo = 0
     @Published private(set) var pieceStartedAt: Date?
     @Published var problem: String?
@@ -16,6 +18,8 @@ final class Recorder: ObservableObject {
     private let location: LocationProvider
     private let queue: UploadQueue
     private let api: APIClient
+    /// Build 21: where the phone is and which way the camera points through each piece.
+    private let path = PathRecorder()
     private var deviceId: String?
     private var key: CaptureKey?
     var gatheringId: String?
@@ -35,6 +39,11 @@ final class Recorder: ObservableObject {
         self.api = api
         camera.onPieceStarted = { [weak self] url, at in self?.pieceStarted(url: url, at: at) }
         camera.onPieceFinished = { [weak self] url, hitLimit, err in self?.pieceFinished(url: url, hitLimit: hitLimit, error: err) }
+        location.onEachLocation = { [weak self] l in self?.path.location(l) }
+        location.onHeading = { [weak self] h in self?.path.heading(h) }
+        let cam = camera
+        path.onLocation = { l in cam.appendLocation(l) }
+        path.onAim = { text in cam.appendAim(text) }
     }
 
     func attach(deviceId: String, key: CaptureKey) {
@@ -52,7 +61,9 @@ final class Recorder: ObservableObject {
         guard let tid = r["ticket_id"] as? String, let nonce = r["nonce"] as? String else {
             throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give a ticket.")
         }
-        return Ticket(ticketId: tid, nonce: nonce, gatheringId: gid, receivedAt: Date())
+        var t = Ticket(ticketId: tid, nonce: nonce, gatheringId: gid, receivedAt: Date())
+        t.clock = await ClockCheck.measure(deviceId: deviceId, key: key, api: api)   // build 21: how far this phone's clock is off
+        return t
     }
 
     /// A fresh ticket for the current gathering: the spare one if it is still good, otherwise a new one.
@@ -102,6 +113,7 @@ final class Recorder: ObservableObject {
     private func beginPiece(ticket: Ticket, fix: CLLocation) {
         let url = CaptureStore.fileURL(UUID().uuidString + ".mov")
         current = (ticket, fix, url, nil)
+        path.begin(url)
         pieceNo += 1
         camera.startPiece(to: url)
     }
@@ -109,6 +121,7 @@ final class Recorder: ObservableObject {
     private func pieceStarted(url: URL, at: Date) {
         guard current?.url == url else { return }
         current?.startedAt = at
+        path.setStart(url, at: at)
         pieceStartedAt = at
         // Get the next piece's ticket a minute before this one reaches its full length.
         nextTicket = nil
@@ -159,14 +172,23 @@ final class Recorder: ObservableObject {
 
     private func enqueue(_ cur: (ticket: Ticket, fix: CLLocation, url: URL, startedAt: Date?), chain: String, segmentNo: Int, error: Error?) async {
         guard FileManager.default.fileExists(atPath: cur.url.path), let started = cur.startedAt else {
+            path.cancel(cur.url)
             if let error { problem = "The camera stopped: " + error.localizedDescription }
             return
         }
         let seconds = (try? await AVURLAsset(url: cur.url).load(.duration).seconds) ?? 0
         let ended = started.addingTimeInterval(seconds.isFinite ? max(0, seconds) : 0)
-        queue.add(CaptureJob(id: UUID().uuidString, fileName: cur.url.lastPathComponent, mimeType: "video/quicktime", chainId: chain,
+        var job = CaptureJob(id: UUID().uuidString, fileName: cur.url.lastPathComponent, mimeType: "video/quicktime", chainId: chain,
                              segmentNo: segmentNo, ticket: cur.ticket, startedAt: started, endedAt: ended,
-                             lat: cur.fix.coordinate.latitude, lng: cur.fix.coordinate.longitude, accuracyM: cur.fix.horizontalAccuracy))
+                             lat: cur.fix.coordinate.latitude, lng: cur.fix.coordinate.longitude, accuracyM: cur.fix.horizontalAccuracy)
+        // Build 21: the camera path goes in a small file next to the clip; its fingerprint is signed with the clip.
+        if let data = path.finish(cur.url, endedAt: ended) {
+            let name = cur.url.deletingPathExtension().lastPathComponent + ".path.json"
+            if (try? data.write(to: CaptureStore.fileURL(name), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])) != nil {
+                job.pathFileName = name; job.pathSha256 = Hash.sha256Hex(data)
+            }
+        }
+        queue.add(job)
         saveToLibrary(cur.url, isVideo: true, takenAt: started, place: cur.fix)
     }
 

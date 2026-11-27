@@ -30,6 +30,8 @@ final class Multiview: ObservableObject {
         for p in players { p.automaticallyWaitsToMinimizeStalling = false; p.isMuted = true }
     }
 
+    var zone: TimeZone? { source.zone }
+
     func moment(atHost h: CFTimeInterval) -> Int { clockMoment + Int(((h - clockHost) * 1000).rounded()) }
 
     func start() async {
@@ -156,7 +158,7 @@ struct MultiviewView: View {
                     ForEach(0..<Multiview.screens, id: \.self) { screen($0) }
                 }
                 HStack {
-                    Text(GroupTimeline.clockLabel(booth.momentMs)).font(.title3.monospacedDigit().weight(.semibold))
+                    Text(GroupTimeline.clockLabel(booth.momentMs, zone: booth.zone)).font(.title3.monospacedDigit().weight(.semibold))
                     Spacer()
                     if let n = booth.note { Text(n).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.trailing) }
                 }
@@ -180,7 +182,7 @@ struct MultiviewView: View {
         return ZStack(alignment: .bottomLeading) {
             PlayerSurface(player: booth.players[i])
             if let c = clip, !booth.running[i], booth.momentMs < c.startMs {
-                Text("Starts " + GroupTimeline.clockLabel(c.startMs)).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("Starts " + GroupTimeline.clockLabel(c.startMs, zone: booth.zone)).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if clip == nil {
                 Image(systemName: "video.slash").foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
             }

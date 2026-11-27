@@ -51,6 +51,28 @@ final class APIClient {
         return try await send(req, okStatuses: [422])
     }
 
+    /// One signed request to Chronum's clock, timed on the phone's own clock right around the network trip
+    /// (after signing, so the time the security chip takes to sign is not counted).
+    func clockPing(deviceId: String, key: CaptureKey) async throws -> (sentMs: Double, serverMs: Double, receivedMs: Double) {
+        let path = "/v1/crowd/clock", body = Data("{}".utf8)
+        let time = Int(Date().timeIntervalSince1970), nonce = Self.newNonce()
+        let sig = try key.signBase64(Self.signingMessage(method: "POST", path: path, time: time, nonce: nonce, body: body))
+        var req = URLRequest(url: Config.apiBase.appendingPathComponent(path))
+        req.httpMethod = "POST"; req.httpBody = body
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(deviceId, forHTTPHeaderField: "X-Crowd-Device")
+        req.setValue(String(time), forHTTPHeaderField: "X-Crowd-Time")
+        req.setValue(nonce, forHTTPHeaderField: "X-Crowd-Nonce")
+        req.setValue(sig, forHTTPHeaderField: "X-Crowd-Signature")
+        let sent = Date().timeIntervalSince1970 * 1000
+        let r = try await send(req)
+        let received = Date().timeIntervalSince1970 * 1000
+        guard let server = (r.body["server_time_ms"] as? NSNumber)?.doubleValue else {
+            throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give its time.")
+        }
+        return (sent, server, received)
+    }
+
     private func send(_ req: URLRequest, okStatuses: Set<Int> = []) async throws -> (status: Int, body: [String: Any]) {
         let (data, resp) = try await session.data(for: req)
         let status = (resp as? HTTPURLResponse)?.statusCode ?? 0

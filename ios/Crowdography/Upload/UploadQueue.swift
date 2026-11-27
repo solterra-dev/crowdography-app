@@ -111,7 +111,8 @@ final class UploadQueue: ObservableObject {
             job.stage = .submitting; update(i, job)
             let st = CaptureStatement(sha256: job.sha256!, byteSize: job.byteSize!, mimeType: job.mimeType, gatheringId: job.ticket.gatheringId,
                                       deviceId: deviceId, ticketId: job.ticket.ticketId, nonce: job.ticket.nonce, startedAt: job.startedAt, endedAt: job.endedAt,
-                                      lat: job.lat, lng: job.lng, accuracyM: job.accuracyM, segmentNo: job.segmentNo, previousCaptureId: previousId)
+                                      lat: job.lat, lng: job.lng, accuracyM: job.accuracyM, segmentNo: job.segmentNo, previousCaptureId: previousId,
+                                      pathSha256: job.pathSha256, clock: job.ticket.clock)
             let bytes = try st.signedBytes()
             let sig = try key.signBase64(bytes)
             let r = try await api.postSigned("/v1/crowd/captures",
@@ -247,6 +248,15 @@ final class UploadQueue: ObservableObject {
         var stored = Set(job.copiesStored ?? [])
         func remember(_ kind: String) { stored.insert(kind); let list = Array(stored).sorted(); changeJob(jobId) { $0.copiesStored = list } }
         do {
+            // The signed camera path first: it is tiny, and it is what puts this angle on the map (build 21).
+            if let pf = job.pathFileName, job.pathSha256 != nil, !stored.contains("path") {
+                let pathURL = CaptureStore.fileURL(pf)
+                if FileManager.default.fileExists(atPath: pathURL.path) {
+                    try await sendCopy(cid, kind: "path", file: pathURL, mime: "application/json", frames: nil, deviceId: deviceId, key: key)
+                    try? FileManager.default.removeItem(at: pathURL)
+                }
+                remember("path")
+            }
             if !stored.contains("strips") {
                 // Strips first: they are the quickest to make, and they are what puts this angle in the scrolling list.
                 let strips = try await CopyMaker.strips(src, folder: dir)

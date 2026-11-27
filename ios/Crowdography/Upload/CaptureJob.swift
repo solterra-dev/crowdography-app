@@ -6,6 +6,8 @@ struct Ticket: Codable, Equatable {
     let nonce: String
     let gatheringId: String?
     let receivedAt: Date
+    /// Build 21: how far this phone's clock was from Chronum's when the ticket was taken. Nil if it could not be measured.
+    var clock: ClockReading? = nil
     var isFresh: Bool { Date().timeIntervalSince(receivedAt) < 240 }
 }
 
@@ -46,6 +48,10 @@ struct CaptureJob: Codable, Identifiable, Equatable {
     /// Kinds already stored: strip0, strip1..., "strips" once all strips are in, play, tile.
     var copiesStored: [String]?
     var copyAttempts: Int?
+    /// Build 21 (Jeff 2026-11-26): where the phone was and which way the camera pointed through the piece, in a small file
+    /// next to the clip. Its sha256 is signed with the clip, so the path cannot be changed later.
+    var pathFileName: String? = nil
+    var pathSha256: String? = nil
 
     var isDone: Bool { stage == .verified || stage == .rejected }
     var isPhoto: Bool { mimeType.hasPrefix("image/") }

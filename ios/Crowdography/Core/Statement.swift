@@ -17,6 +17,9 @@ struct CaptureStatement: Codable, Equatable {
     var accuracyM: Double
     var segmentNo: Int
     var previousCaptureId: String?
+    /// Build 21: the camera path's sha256, and the clock check. Sent only when present (the server accepts them since 0.15).
+    var pathSha256: String? = nil
+    var clock: ClockReading? = nil
 
     /// The exact bytes to sign and send. Only the fields the server knows; previous_capture_id only for a continued piece.
     func signedBytes() throws -> Data {
@@ -37,6 +40,8 @@ struct CaptureStatement: Codable, Equatable {
             "segment_no": segmentNo,
         ]
         if segmentNo > 1, let p = previousCaptureId { o["previous_capture_id"] = p }
+        if let h = pathSha256 { o["path_sha256"] = h }
+        if let c = clock { o["clock_offset_ms"] = c.offsetMs; o["clock_rtt_ms"] = c.rttMs }
         return try JSONSerialization.data(withJSONObject: o, options: [.sortedKeys, .withoutEscapingSlashes])
     }
 }

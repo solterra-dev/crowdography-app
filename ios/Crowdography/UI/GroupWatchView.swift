@@ -14,6 +14,8 @@ final class GroupPlayback: ObservableObject {
     @Published private(set) var loaded = false
     @Published var problem: String?
     @Published private(set) var note: String?
+    /// The time zone where this group filmed (Jeff 2026-11-26: show times where the clip was filmed).
+    @Published private(set) var zone: TimeZone?
 
     let player = AVPlayer()
     private let groupId: String
@@ -34,6 +36,9 @@ final class GroupPlayback: ObservableObject {
         do {
             let r = try await model.groupFootage(groupId)
             group = r.group; clips = r.clips; fetchedAt = Date(); problem = nil
+            if zone == nil, let c = clips.first(where: { $0.lat != nil && $0.lng != nil }), let la = c.lat, let lo = c.lng {
+                Task { self.zone = await TimeZoneBook.shared.zone(lat: la, lng: lo) }   // does not hold up playback
+            }
             if current == nil, let first = clips.first(where: { $0.isVideo }) { await play(first, at: first.startMs) }
         } catch { problem = error.localizedDescription }
         loaded = true
@@ -111,6 +116,7 @@ struct GroupWatchView: View {
     @State private var picking = false
     @State private var picked: [String] = []
     @State private var booth: BoothStart?
+    @State private var showMap = true
 
     struct BoothStart: Identifiable { let id = UUID(); let clips: [GroupClip]; let at: Int }
 
@@ -123,6 +129,9 @@ struct GroupWatchView: View {
         VStack(spacing: 0) {
             screen
             info
+            if showMap && playback.clips.contains(where: { $0.isVideo && ($0.lat != nil || $0.pathURL != nil) }) {
+                GroupMapView(playback: playback).frame(height: 210)
+            }
             List {
                 if let p = playback.problem { Text(p).font(.footnote).foregroundStyle(.orange) }
                 if playback.loaded && playback.clips.isEmpty && playback.problem == nil {
@@ -142,6 +151,8 @@ struct GroupWatchView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack {
+                    Button { showMap.toggle() } label: { Image(systemName: showMap ? "map.fill" : "map") }
+                        .accessibilityLabel(showMap ? "Hide the map" : "Show the map")
                     if playback.clips.contains(where: { $0.isVideo }) {
                         Button { picking.toggle(); picked = [] } label: { Image(systemName: picking ? "xmark" : "square.grid.2x2") }
                             .accessibilityLabel(picking ? "Stop picking" : "Four screens")
@@ -201,7 +212,7 @@ struct GroupWatchView: View {
                 Text(c.filmedBy ?? "Someone in the group").font(.subheadline.weight(.semibold)).lineLimit(1)
             }
             Spacer()
-            if let t = playback.momentMs { Text(GroupTimeline.clockLabel(t)).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary) }
+            if let t = playback.momentMs { Text(GroupTimeline.clockLabel(t, zone: playback.zone)).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary) }
         }
         .padding(.horizontal).padding(.vertical, 8)
     }
@@ -235,7 +246,7 @@ struct GroupWatchView: View {
                     .overlay(RoundedRectangle(cornerRadius: 4).stroke(isCurrent ? Color.red : (sameMoment ? Color.green : Color.clear), lineWidth: 2))
                 VStack(alignment: .leading, spacing: 2) {
                     Text((c.filmedBy ?? "Someone") + (c.isMine ? " (you)" : "")).font(.subheadline.weight(isCurrent ? .semibold : .regular)).lineLimit(1)
-                    Text(GroupTimeline.clockLabel(c.startMs) + (sameMoment && !isCurrent ? " · same moment" : ""))
+                    Text(GroupTimeline.clockLabel(c.startMs, zone: playback.zone) + (sameMoment && !isCurrent ? " · same moment" : ""))
                         .font(.caption).foregroundStyle(sameMoment ? .green : .secondary)
                 }
                 Spacer()

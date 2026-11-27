@@ -14,6 +14,9 @@ struct FootageItem: Identifiable, Equatable {
     /// True when Chronum checked the original and it passed.
     let verified: Bool
     let gatheringName: String?
+    /// Where it was filmed (build 21), so its time can be shown in that place's time zone.
+    let lat: Double?
+    let lng: Double?
     /// A private link to the original. It stops working about 30 minutes after it was received.
     var viewURL: URL?
     var linkReceivedAt: Date
@@ -36,6 +39,8 @@ struct FootageItem: Identifiable, Equatable {
         pieceNo = d["piece_no"] as? Int ?? 1
         verified = d["verified"] as? Bool ?? false
         gatheringName = d["gathering_name"] as? String
+        lat = (d["lat"] as? NSNumber)?.doubleValue
+        lng = (d["lng"] as? NSNumber)?.doubleValue
         viewURL = (d["view_url"] as? String).flatMap { URL(string: $0) }
         linkReceivedAt = receivedAt
     }

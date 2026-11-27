@@ -9,6 +9,8 @@ struct FootageViewer: View {
     @State private var player: AVPlayer?
     @State private var photo: UIImage?
     @State private var problem: String?
+    /// Where it was filmed decides the time zone of its title (Jeff 2026-11-26).
+    @State private var zone: TimeZone?
 
     var body: some View {
         NavigationStack {
@@ -29,7 +31,7 @@ struct FootageViewer: View {
                     ProgressView().tint(.white)
                 }
             }
-            .navigationTitle(item.startedAt.formatted(date: .abbreviated, time: .shortened))
+            .navigationTitle(titleText)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
@@ -37,7 +39,15 @@ struct FootageViewer: View {
             }
         }
         .task { await load() }
+        .task(id: item.id) { if let la = item.lat, let lo = item.lng { zone = await TimeZoneBook.shared.zone(lat: la, lng: lo) } }
         .onDisappear { player?.pause() }
+    }
+
+    /// For example "Nov 26, 2026, 5:39 PM EST", in the time zone where it was filmed.
+    private var titleText: String {
+        let z = zone ?? .current
+        let when = item.startedAt.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, timeZone: z))
+        return when + (z.abbreviation(for: item.startedAt).map { " " + $0 } ?? "")
     }
 
     private var details: some View {

@@ -46,6 +46,10 @@ struct GroupClip: Identifiable, Equatable {
     let tileURL: URL?
     /// One picture per minute, each holding a frame for every second (see StripLayout).
     let stripURLs: [URL]
+    /// The signed camera path (build 21): where the phone was and which way it pointed through the clip.
+    let pathURL: URL?
+    /// True when the filming phone checked its clock against Chronum's, so start and end are on the server's clock.
+    let clockChecked: Bool
 
     init?(_ d: [String: Any]) {
         guard let id = d["capture_id"] as? String, !id.isEmpty, let s = Self.int(d["start_ms"]), let e = Self.int(d["end_ms"]) else { return nil }
@@ -62,6 +66,8 @@ struct GroupClip: Identifiable, Equatable {
         playURL = (copies?["play"] as? String).flatMap { URL(string: $0) }
         tileURL = (copies?["tile"] as? String).flatMap { URL(string: $0) }
         stripURLs = (copies?["strips"] as? [String] ?? []).compactMap { URL(string: $0) }
+        pathURL = (copies?["path"] as? String).flatMap { URL(string: $0) }
+        clockChecked = d["clock_checked"] as? Bool ?? false
     }
 
     /// What the big screen plays: the playback copy when there is one, otherwise the original.
@@ -123,9 +129,10 @@ enum GroupTimeline {
         return (x * x + y * y).squareRoot()
     }
 
-    /// 5:39:42.3 PM for a moment on the shared clock, in the phone's own time zone.
-    static func clockLabel(_ ms: Int) -> String {
-        let f = DateFormatter(); f.dateFormat = "h:mm:ss.S a"
+    /// 5:39:42.3 PM EST for a moment on the shared clock. Jeff 2026-11-26: shown in the time zone where the clip was
+    /// filmed (worked out from its location), not the viewer's; the viewer's own zone only until that is known.
+    static func clockLabel(_ ms: Int, zone: TimeZone? = nil) -> String {
+        let f = DateFormatter(); f.dateFormat = "h:mm:ss.S a zzz"; f.timeZone = zone ?? .current
         return f.string(from: Date(timeIntervalSince1970: Double(ms) / 1000))
     }
 }

@@ -1,4 +1,6 @@
 import AVFoundation
+import CoreLocation
+import CoreMedia
 import Foundation
 
 /// The camera. Films with Apple's own capture pipeline only: no filters, no effects, nothing generated.
@@ -11,6 +13,10 @@ final class CameraController: NSObject {
     private let photoOutput = AVCapturePhotoOutput()
     private var configured = false
     private var cameraDevice: AVCaptureDevice?
+    /// Build 21: a data track in the video file itself, carrying where the phone was and which way the camera pointed
+    /// (Jeff 2026-11-26). Written while recording, so it is part of the original and inside the proof.
+    private var metadataInput: AVCaptureMetadataInput?
+    static let aimIdentifier = AVMetadataIdentifier(rawValue: "mdta/com.crowdography.camera.aim")
 
     /// Called on the main queue when a piece really starts (first frames on disk).
     var onPieceStarted: (@MainActor (URL, Date) -> Void)?
@@ -84,6 +90,49 @@ final class CameraController: NSObject {
             if conn.isVideoRotationAngleSupported(90) { conn.videoRotationAngle = 90 }
         }
         photoOutput.maxPhotoQualityPrioritization = .quality
+        try? ExceptionGuard.run { self.addDataTrack() }   // never stops the camera: without it the separate signed path still has everything
+    }
+
+    /// Connects a timed data track to the movie output: the standard location format, plus the camera direction as short text.
+    private func addDataTrack() {
+        let specs: [[String: Any]] = [
+            [kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier as String: AVMetadataIdentifier.quickTimeMetadataLocationISO6709.rawValue,
+             kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType as String: kCMMetadataDataType_QuickTimeMetadataLocation_ISO6709 as String],
+            [kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier as String: Self.aimIdentifier.rawValue,
+             kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType as String: kCMMetadataBaseDataType_UTF8 as String],
+        ]
+        var desc: CMFormatDescription?
+        guard CMMetadataFormatDescriptionCreateWithMetadataSpecifications(allocator: kCFAllocatorDefault, metadataType: kCMMetadataFormatType_Boxed,
+                                                                          metadataSpecifications: specs as CFArray, formatDescriptionOut: &desc) == noErr,
+              let desc else { return }
+        let input = AVCaptureMetadataInput(formatDescription: desc, clock: CMClockGetHostTimeClock())
+        guard session.canAddInput(input) else { return }
+        session.addInputWithNoConnections(input)
+        let conn = AVCaptureConnection(inputPorts: input.ports, output: movieOutput)
+        guard session.canAddConnection(conn) else { session.removeInput(input); return }
+        session.addConnection(conn)
+        metadataInput = input
+    }
+
+    /// Adds one location reading to the data track of the piece being recorded (ignored between pieces).
+    func appendLocation(_ l: CLLocation) {
+        let text = CameraAim.iso6709(lat: l.coordinate.latitude, lng: l.coordinate.longitude, altitude: l.verticalAccuracy >= 0 ? l.altitude : nil)
+        appendItem(AVMetadataIdentifier.quickTimeMetadataLocationISO6709, text, kCMMetadataDataType_QuickTimeMetadataLocation_ISO6709 as String)
+    }
+    /// Adds one camera-direction reading to the data track.
+    func appendAim(_ text: String) { appendItem(Self.aimIdentifier, text, kCMMetadataBaseDataType_UTF8 as String) }
+
+    private func appendItem(_ id: AVMetadataIdentifier, _ value: String, _ dataType: String) {
+        let now = CMClockGetTime(CMClockGetHostTimeClock())
+        queue.async {
+            guard let input = self.metadataInput, self.movieOutput.isRecording else { return }
+            let item = AVMutableMetadataItem()
+            item.identifier = id
+            item.value = value as NSString
+            item.dataType = dataType
+            let group = AVTimedMetadataGroup(items: [item], timeRange: CMTimeRange(start: now, duration: .invalid))
+            try? ExceptionGuard.run { try input.append(group) }
+        }
     }
 
     private func lockFrameRate() throws {
