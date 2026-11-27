@@ -91,7 +91,7 @@ final class PathRecorder {
         let northKnown = frame != .xArbitraryZVertical
         let h = lastHeading
         let compass = h.map { $0.trueHeading >= 0 ? $0.trueHeading : $0.magneticHeading } ?? -1
-        let row = [bootMs + m.timestamp * 1000, northKnown ? a.azimuth : -1, a.pitch, q.x, q.y, q.z, q.w,
+        let row: [Double] = [bootMs + m.timestamp * 1000, northKnown ? a.azimuth : -1, a.pitch, q.x, q.y, q.z, q.w,
                    compass, h.map { $0.headingAccuracy } ?? -1]
         for s in segments.values { s.aim.append(row) }
         onAim?(CameraAim.dataTrackText(azimuth: northKnown ? a.azimuth : nil, pitch: a.pitch, compass: compass >= 0 ? compass : nil))
