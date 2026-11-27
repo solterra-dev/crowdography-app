@@ -45,10 +45,25 @@ final class GroupPlayback: ObservableObject {
         if let t = momentMs, c.covers(t) { await play(c, at: t) } else { await play(c, at: c.startMs) }
     }
 
+    /// A link to play angle c that is still good: the playback copy (or for the four-screen view, the small copy) when the
+    /// filming phone has made one, otherwise the original. Links last 30 minutes, so the list is fetched again after 25.
+    func freshURL(for c: GroupClip, tile: Bool = false) async -> URL? {
+        var clip = c
+        if Date().timeIntervalSince(fetchedAt) > 1500 {
+            if let r = try? await model.groupFootage(groupId) { group = r.group ?? group; clips = r.clips; fetchedAt = Date() }
+            clip = clips.first(where: { $0.id == c.id }) ?? c
+        }
+        if let u = tile ? clip.tileScreenURL : clip.bigScreenURL, Date().timeIntervalSince(fetchedAt) < 1500 { return u }
+        return try? await model.groupLink(c.id)
+    }
+
+    /// Back from the four-screen view: play this angle on the big screen from that moment.
+    func watch(_ c: GroupClip, at t: Int) async { await play(c, at: c.covers(t) ? t : c.startMs) }
+    func pause() { player.pause() }
+
     private func play(_ c: GroupClip, at t: Int) async {
         do {
-            let url: URL
-            if let u = c.viewURL, Date().timeIntervalSince(fetchedAt) < 1500 { url = u } else { url = try await model.groupLink(c.id) }
+            guard let url = await freshURL(for: c) else { throw APIError(status: 0, code: "no_link", message: "Chronum did not give a link to that angle.") }
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
             let item = AVPlayerItem(url: url)
             if let o = endObserver { NotificationCenter.default.removeObserver(o) }
@@ -92,6 +107,12 @@ struct GroupWatchView: View {
     let summary: GroupSummary
     @StateObject private var playback: GroupPlayback
     @State private var filmingHere = false
+    /// Picking angles for the four-screen view (Jeff 2026-11-26: select 4 feeds, like a control booth).
+    @State private var picking = false
+    @State private var picked: [String] = []
+    @State private var booth: BoothStart?
+
+    struct BoothStart: Identifiable { let id = UUID(); let clips: [GroupClip]; let at: Int }
 
     init(summary: GroupSummary, model: AppModel) {
         self.summary = summary
@@ -107,6 +128,10 @@ struct GroupWatchView: View {
                 if playback.loaded && playback.clips.isEmpty && playback.problem == nil {
                     Text("Nothing filmed in this group yet. Anyone in the group can tap Film to add an angle.").font(.footnote).foregroundStyle(.secondary)
                 }
+                if picking {
+                    Text("Pick up to 4 videos for the four-screen view. Leave them unpicked to use the angles running at this moment.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
                 ForEach(playback.clips) { row($0) }
             }
             .listStyle(.plain)
@@ -117,6 +142,10 @@ struct GroupWatchView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack {
+                    if playback.clips.contains(where: { $0.isVideo }) {
+                        Button { picking.toggle(); picked = [] } label: { Image(systemName: picking ? "xmark" : "square.grid.2x2") }
+                            .accessibilityLabel(picking ? "Stop picking" : "Four screens")
+                    }
                     if let code = summary.joinCode {
                         ShareLink(item: "Join my Crowdography group \"\(summary.name)\" with the code \(code)") { Image(systemName: "square.and.arrow.up") }
                             .accessibilityLabel("Share the group code")
@@ -130,6 +159,17 @@ struct GroupWatchView: View {
         }
         .alert("Filming into \(summary.name)", isPresented: $filmingHere) { Button("OK", role: .cancel) {} } message: {
             Text("Everything you film from now on goes into this group, until you leave it under Groups.")
+        }
+        .safeAreaInset(edge: .bottom) {
+            if picking {
+                Button { openBooth() } label: {
+                    Text(picked.isEmpty ? "Watch four screens" : "Watch \(picked.count) on four screens").frame(maxWidth: .infinity).padding(.vertical, 6)
+                }
+                .buttonStyle(.borderedProminent).tint(.red).padding()
+            }
+        }
+        .fullScreenCover(item: $booth) { b in
+            MultiviewView(source: playback, clips: b.clips, at: b.at) { clip, t in Task { await playback.watch(clip, at: t) } }
         }
         .task { await playback.load() }
         .onDisappear { playback.stop() }
@@ -166,13 +206,33 @@ struct GroupWatchView: View {
         .padding(.horizontal).padding(.vertical, 8)
     }
 
+    private func openBooth() {
+        let now = playback.momentMs ?? playback.clips.first(where: { $0.isVideo })?.startMs ?? 0
+        let chosen = picked.isEmpty ? GroupTimeline.fill(Multiview.screens, at: now, from: playback.clips)
+                                    : playback.clips.filter { picked.contains($0.id) }
+        guard !chosen.isEmpty else { return }
+        let at = chosen.contains(where: { $0.covers(now) }) ? now : (chosen.map(\.startMs).min() ?? now)
+        playback.pause(); picking = false; picked = []
+        booth = BoothStart(clips: chosen, at: at)
+    }
+
     private func row(_ c: GroupClip) -> some View {
         let isCurrent = playback.current?.id == c.id
         let sameMoment = playback.momentMs.map { c.covers($0) } ?? false
-        return Button { Task { await playback.select(c) } } label: {
+        let isPicked = picked.contains(c.id)
+        return Button {
+            if picking {
+                guard c.isVideo else { return }
+                if isPicked { picked.removeAll { $0 == c.id } } else if picked.count < Multiview.screens { picked.append(c.id) }
+            } else { Task { await playback.select(c) } }
+        } label: {
             HStack(spacing: 12) {
-                Image(systemName: isCurrent ? "play.circle.fill" : (c.isVideo ? "video" : "photo"))
-                    .foregroundStyle(isCurrent ? .red : (sameMoment ? .green : .secondary)).font(.title3)
+                if picking {
+                    Image(systemName: isPicked ? "checkmark.circle.fill" : "circle").foregroundStyle(isPicked ? .red : .secondary).font(.title3)
+                }
+                // The frame of this angle at the moment being watched, from its one-a-second strip (build 20).
+                StripFrame(clip: c, momentMs: playback.momentMs)
+                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(isCurrent ? Color.red : (sameMoment ? Color.green : Color.clear), lineWidth: 2))
                 VStack(alignment: .leading, spacing: 2) {
                     Text((c.filmedBy ?? "Someone") + (c.isMine ? " (you)" : "")).font(.subheadline.weight(isCurrent ? .semibold : .regular)).lineLimit(1)
                     Text(GroupTimeline.clockLabel(c.startMs) + (sameMoment && !isCurrent ? " · same moment" : ""))

@@ -7,7 +7,7 @@ import Foundation
 final class Recorder: ObservableObject {
     enum Mode: String { case video, photo }
     @Published var mode: Mode = .video
-    @Published private(set) var isRecording = false
+    @Published private(set) var isRecording = false { didSet { queue.copiesOnHold = isRecording } }   // build 20: no copies made while filming
     @Published private(set) var pieceNo = 0
     @Published private(set) var pieceStartedAt: Date?
     @Published var problem: String?

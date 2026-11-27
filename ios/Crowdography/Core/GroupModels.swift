@@ -41,6 +41,11 @@ struct GroupClip: Identifiable, Equatable {
     let lat: Double?
     let lng: Double?
     let viewURL: URL?
+    /// Viewing copies made by the filming phone (build 20). Nil until that phone has made them; the original is used instead.
+    let playURL: URL?
+    let tileURL: URL?
+    /// One picture per minute, each holding a frame for every second (see StripLayout).
+    let stripURLs: [URL]
 
     init?(_ d: [String: Any]) {
         guard let id = d["capture_id"] as? String, !id.isEmpty, let s = Self.int(d["start_ms"]), let e = Self.int(d["end_ms"]) else { return nil }
@@ -53,7 +58,16 @@ struct GroupClip: Identifiable, Equatable {
         lat = (d["lat"] as? NSNumber)?.doubleValue
         lng = (d["lng"] as? NSNumber)?.doubleValue
         viewURL = (d["view_url"] as? String).flatMap { URL(string: $0) }
+        let copies = d["copies"] as? [String: Any]
+        playURL = (copies?["play"] as? String).flatMap { URL(string: $0) }
+        tileURL = (copies?["tile"] as? String).flatMap { URL(string: $0) }
+        stripURLs = (copies?["strips"] as? [String] ?? []).compactMap { URL(string: $0) }
     }
+
+    /// What the big screen plays: the playback copy when there is one, otherwise the original.
+    var bigScreenURL: URL? { playURL ?? viewURL }
+    /// What a quarter of the four-screen view plays.
+    var tileScreenURL: URL? { tileURL ?? playURL ?? viewURL }
 
     static func int(_ v: Any?) -> Int? { (v as? NSNumber)?.intValue }
 
@@ -71,7 +85,9 @@ enum GroupTimeline {
     /// The angle to switch to when `current` ends at moment t, and the moment to start it at:
     /// another video still running then (the one filmed closest to the current one, or the longest running if places are unknown),
     /// otherwise the next video to start after t, from its beginning. Nil when nothing is left.
-    static func next(after current: GroupClip, at t: Int, in clips: [GroupClip]) -> (clip: GroupClip, atMs: Int)? {
+    /// `excluding`: angles already on another screen (the four-screen view never shows one angle twice).
+    static func next(after current: GroupClip, at t: Int, in clips: [GroupClip], excluding: Set<String> = []) -> (clip: GroupClip, atMs: Int)? {
+        let clips = clips.filter { !excluding.contains($0.id) }
         let running = clips.filter { $0.isVideo && $0.id != current.id && $0.startMs <= t && $0.endMs > t + minimumLeftMs }
         if !running.isEmpty {
             let pick = running.min { a, b in
@@ -88,6 +104,15 @@ enum GroupTimeline {
             return (later, later.startMs)
         }
         return nil
+    }
+
+    /// Up to `count` videos to fill the four-screen view at moment t: the ones running then, longest left first,
+    /// then the next ones to start.
+    static func fill(_ count: Int, at t: Int, from clips: [GroupClip]) -> [GroupClip] {
+        let videos = clips.filter { $0.isVideo }
+        let running = videos.filter { $0.covers(t) }.sorted { $0.endMs > $1.endMs }
+        let later = videos.filter { $0.startMs > t }.sorted { $0.startMs < $1.startMs }
+        return Array((running + later).prefix(count))
     }
 
     /// Meters between where two angles were filmed, or nil when either place is unknown.

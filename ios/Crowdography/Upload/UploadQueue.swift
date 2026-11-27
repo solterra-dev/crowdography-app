@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// Proves and stores each piece, in the order it was filmed:
 /// 1. hash every byte of the file, 2. ask Chronum for an upload address, 3. upload the original untouched,
@@ -12,6 +13,9 @@ final class UploadQueue: ObservableObject {
     private var deviceId: String?
     private var key: CaptureKey?
     private let api: APIClient
+    private var copying = false
+    /// Set by the recorder while filming, so making copies never competes with the camera.
+    var copiesOnHold = false { didSet { if !copiesOnHold { kickCopies() } } }
 
     init(api: APIClient = .shared) {
         self.api = api
@@ -42,6 +46,7 @@ final class UploadQueue: ObservableObject {
         Task {
             repeat { self.again = false; await self.drain() } while self.again
             self.running = false
+            self.kickCopies()
         }
     }
 
@@ -184,8 +189,10 @@ final class UploadQueue: ObservableObject {
     /// Jeff 2026-11-21: once the server has verified a clip, the app deletes its own working copy. It does so only when
     /// BOTH are true: Chronum answered verified, and an exact copy is in the person's photo library. A clip that was
     /// not verified, or that could not be copied to the library, is kept.
+    /// Build 20: a video's working copy is also kept until its viewing copies are made (or the phone gave up on them).
     private func removeLocalCopyIfSafe(_ i: Int) {
         guard jobs[i].stage == .verified, jobs[i].inLibrary, !jobs[i].localCopyRemoved else { return }
+        guard jobs[i].isPhoto || jobs[i].copiesDone == true else { return }
         try? FileManager.default.removeItem(at: CaptureStore.fileURL(jobs[i].fileName))
         jobs[i].localCopyRemoved = true
     }
@@ -198,4 +205,104 @@ final class UploadQueue: ObservableObject {
     }
 
     private func save() { CaptureStore.saveJobs(jobs) }
+
+    // MARK: viewing copies (Jeff 2026-11-26: the phone makes the copies, so it scales by itself)
+
+    /// Starts making copies for the next verified video that needs them, one video at a time.
+    func kickCopies() {
+        guard !copying, !copiesOnHold, let deviceId, let key, let job = jobs.first(where: { $0.needsCopies }) else { return }
+        copying = true
+        let id = job.id
+        Task {
+            let task = UIApplication.shared.beginBackgroundTask(withName: "Crowdography copies")
+            let finished = await self.makeCopies(jobId: id, deviceId: deviceId, key: key)
+            if task != .invalid { UIApplication.shared.endBackgroundTask(task) }
+            self.copying = false
+            if finished { self.kickCopies() } else { self.scheduleCopyRetry() }
+        }
+    }
+
+    private func scheduleCopyRetry() {
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 60_000_000_000)
+            self?.kickCopies()
+        }
+    }
+
+    private func changeJob(_ id: String, _ edit: (inout CaptureJob) -> Void) {
+        guard let i = jobs.firstIndex(where: { $0.id == id }) else { return }
+        edit(&jobs[i])
+        removeLocalCopyIfSafe(i)
+        save()
+    }
+
+    /// Makes and sends the frame strips, then the playback copy, then the four-screen copy. Each one that is stored is
+    /// remembered, so an interrupted run picks up where it stopped. Returns false when it should be tried again later.
+    private func makeCopies(jobId: String, deviceId: String, key: CaptureKey) async -> Bool {
+        guard let job = jobs.first(where: { $0.id == jobId }), let cid = job.captureId else { return true }
+        let src = CaptureStore.fileURL(job.fileName)
+        guard FileManager.default.fileExists(atPath: src.path) else { changeJob(jobId) { $0.copiesDone = true }; return true }
+        let dir = CaptureStore.folder.appendingPathComponent("copies/" + jobId, isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        var stored = Set(job.copiesStored ?? [])
+        func remember(_ kind: String) { stored.insert(kind); let list = Array(stored).sorted(); changeJob(jobId) { $0.copiesStored = list } }
+        do {
+            if !stored.contains("strips") {
+                // Strips first: they are the quickest to make, and they are what puts this angle in the scrolling list.
+                let strips = try await CopyMaker.strips(src, folder: dir)
+                for (n, s) in strips.enumerated() where !stored.contains("strip\(n)") {
+                    try await sendCopy(cid, kind: "strip\(n)", file: s.url, mime: "image/jpeg", frames: s.frames, deviceId: deviceId, key: key)
+                    remember("strip\(n)")
+                }
+                remember("strips")
+            }
+            for (kind, side, bits) in [("play", CGFloat(1280), 2_500_000), ("tile", CGFloat(960), 1_200_000)] where !stored.contains(kind) {
+                if copiesOnHold { return false }
+                let out = dir.appendingPathComponent(kind + ".mp4")
+                try await CopyMaker.transcode(src, to: out, longSide: side, videoBitsPerSecond: bits)
+                try await sendCopy(cid, kind: kind, file: out, mime: "video/mp4", frames: nil, deviceId: deviceId, key: key)
+                try? FileManager.default.removeItem(at: out)
+                remember(kind)
+            }
+            try? FileManager.default.removeItem(at: dir)
+            changeJob(jobId) { $0.copiesDone = true }
+            return true
+        } catch let e as APIError where [400, 403, 404, 409, 413, 422].contains(e.status) {
+            // Chronum said no for good (for example the copy is too large): the original still plays, so stop trying.
+            try? FileManager.default.removeItem(at: dir)
+            changeJob(jobId) { $0.copiesDone = true; $0.lastProblem = "Viewing copies were not stored: " + e.message }
+            return true
+        } catch {
+            // A copy stops when the app leaves the screen; that is not counted as a failed try.
+            let counts = UIApplication.shared.applicationState == .active
+            var gaveUp = false
+            changeJob(jobId) { j in
+                if counts { j.copyAttempts = (j.copyAttempts ?? 0) + 1 }
+                if (j.copyAttempts ?? 0) >= 5 { j.copiesDone = true; j.lastProblem = "Viewing copies could not be made: " + error.localizedDescription; gaveUp = true }
+            }
+            if gaveUp { try? FileManager.default.removeItem(at: dir) }
+            return gaveUp
+        }
+    }
+
+    /// Asks Chronum for an address for one copy, uploads it, then confirms it (Chronum checks the stored size).
+    private func sendCopy(_ cid: String, kind: String, file: URL, mime: String, frames: Int?, deviceId: String, key: CaptureKey) async throws {
+        let size = (try FileManager.default.attributesOfItem(atPath: file.path)[.size] as? NSNumber)?.intValue ?? 0
+        do {
+            let r = try await api.postSigned("/v1/crowd/captures/copies/upload-requests",
+                                             ["capture_id": cid, "kind": kind, "mime_type": mime, "byte_size": size], deviceId: deviceId, key: key).body
+            guard let u = (r["upload_url"] as? String).flatMap(URL.init(string:)) else {
+                throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give an address for the \(kind) copy.")
+            }
+            var req = URLRequest(url: u); req.httpMethod = "PUT"
+            let (_, resp) = try await URLSession.shared.upload(for: req, fromFile: file)
+            let st = (resp as? HTTPURLResponse)?.statusCode ?? 0
+            guard (200..<300).contains(st) else { throw APIError(status: 0, code: "copy_upload", message: "Storage answered \(st) for the \(kind) copy.") }
+        } catch let e as APIError where e.code == "already_have" {
+            return   // stored on an earlier try
+        }
+        var body: [String: Any] = ["capture_id": cid, "kind": kind, "byte_size": size]
+        if let frames { body["frame_count"] = frames }
+        _ = try await api.postSigned("/v1/crowd/captures/copies", body, deviceId: deviceId, key: key)
+    }
 }

@@ -40,9 +40,17 @@ struct CaptureJob: Codable, Identifiable, Equatable {
     var inLibrary = false
     /// True once the app's own working copy has been removed (only after verified AND in the library).
     var localCopyRemoved = false
+    /// Build 20 (Jeff 2026-11-26): viewing copies the phone makes after a video verifies. Optional, so job lists saved by
+    /// earlier builds still load. True once every copy is stored, or the phone gave up on them (the original is enough to watch).
+    var copiesDone: Bool?
+    /// Kinds already stored: strip0, strip1..., "strips" once all strips are in, play, tile.
+    var copiesStored: [String]?
+    var copyAttempts: Int?
 
     var isDone: Bool { stage == .verified || stage == .rejected }
     var isPhoto: Bool { mimeType.hasPrefix("image/") }
+    /// A verified video whose viewing copies are not made yet, with its working file still on the phone.
+    var needsCopies: Bool { !isPhoto && stage == .verified && captureId != nil && copiesDone != true && !localCopyRemoved }
 }
 
 /// Where pieces and the job list live: the app's own private folder, left out of iCloud backups.
