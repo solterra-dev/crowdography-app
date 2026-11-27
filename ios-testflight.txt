@@ -1,30 +1,28 @@
-commit 6e1f812ea34121cf8d198f08f193a50caccb7086  build 21  result failure  key ready: yes  Fri Nov 27 02:52:41 UTC 2026
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:94:19: error: heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
-** ARCHIVE FAILED **
+commit f1307cfb0bcb1cc71bbe6454ed5e75b5db427e33  build 22  result cancelled  key ready: yes  Fri Nov 27 02:54:37 UTC 2026
+** ARCHIVE SUCCEEDED **
 ---
-                                                               ?? <#default value#>
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: force-unwrap the value to avoid this warning
-                   compass, h.map { $0.headingAccuracy } ?? -1]
-                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-                                                              !
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: explicitly cast to 'Any' with 'as Any' to silence this warning
-                   compass, h.map { $0.headingAccuracy } ?? -1]
-                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-                                                               as Any
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
-        for s in segments.values { s.aim.append(row) }
-                                                ^
-                                                    as! [Double]
-/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: note: arguments to generic parameter 'Element' ('Any' and 'Double') are expected to be equal
-        for s in segments.values { s.aim.append(row) }
-                                                ^
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    /bin/chmod -RH u+w,go-w,a+rX /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app
 
-** ARCHIVE FAILED **
+CodeSign /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/IntermediateBuildFilesPath/Crowdography.build/Release-iphoneos/Crowdography.build/Crowdography.app.xcent --generate-entitlement-der /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app
 
+RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app
 
-The following build commands failed:
-	SwiftCompile normal arm64 Compiling\ APIClient.swift,\ AppModel.swift,\ BackgroundUploader.swift,\ CameraController.swift,\ CameraPath.swift,\ CameraPreview.swift,\ CameraScreen.swift,\ CaptureJob.swift,\ CaptureKey.swift,\ ClockCheck.swift,\ Config.swift,\ CopyMaker.swift,\ CrowdographyApp.swift,\ DeviceRegistrar.swift,\ ExceptionGuard.swift,\ FootageItem.swift,\ FootageLibrary.swift,\ FootageViewer.swift,\ GroupMapView.swift,\ GroupModels.swift,\ GroupWatchView.swift,\ GroupsView.swift,\ Hex.swift,\ HomeView.swift,\ JoinSheet.swift,\ Keychain.swift,\ LocationProvider.swift,\ LoginName.swift
-	CompileSwift normal arm64 (in target 'Crowdography' from project 'Crowdography')
-	Archiving project Crowdography with scheme Crowdography
-(3 failures)
+Validate /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    builtin-validationUtility /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
+    cd /Users/runner/work/crowdography-app/crowdography-app/ios
+    /usr/bin/touch -c /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Intermediates.noindex/ArchiveIntermediates/Crowdography/InstallationBuildProductsLocation/Applications/Crowdography.app
+
+** ARCHIVE SUCCEEDED **
+
+2026-11-27 02:54:26.482 xcodebuild[3200:13068] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/q2/p1t6rgxj5fj32g1dc7dmd49r0000gn/T/Crowdography_2026-11-27_02-54-26.480.xcdistributionlogs".
