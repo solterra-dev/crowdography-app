@@ -1,260 +1,273 @@
-commit e0d180c43fa5694dff241b764f0c2c3e6a3e8e2e  Xcode 26.6  result success  Fri Nov 27 02:58:06 UTC 2026
+commit 2d146e5f6df2ff4875c2eb0c82fd13ed2bcf0eaa  Xcode 26.6  result success  Fri Nov 27 03:45:26 UTC 2026
 Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testClockReadingUsesTheMiddleOfTheTrip]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testClockReadingUsesTheMiddleOfTheTrip]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testDataTrackTexts]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testDataTrackTexts]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testInitials]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testInitials]' passed (0.119 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testInitials]' passed (0.289 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testMapShowsOnlyCamerasFilmingAtTheMoment]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testMapShowsOnlyCamerasFilmingAtTheMoment]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' passed (0.004 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testThePathFileReadsBack]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testThePathFileReadsBack]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' passed (0.003 seconds).
-	 Executed 10 tests, with 0 failures (0 unexpected) in 0.134 (0.738) seconds
+Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' passed (0.007 seconds).
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.307 (0.661) seconds
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testCopiesWaitForAVerifiedClipAndPhotosNeedOnlyTheirDirection]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testCopiesWaitForAVerifiedClipAndPhotosNeedOnlyTheirDirection]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testFullLengthPieces]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testFullLengthPieces]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testGroupsByDayThenPlace]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testGroupsByDayThenPlace]' passed (0.010 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testMomentsReadLikeGroups]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testMomentsReadLikeGroups]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testPhotosShowOnTheMapNearTheirMoment]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testPhotosShowOnTheMapNearTheirMoment]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testTheDayIsTheDayWhereItWasFilmed]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testTheDayIsTheDayWhereItWasFilmed]' passed (0.001 seconds).
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.018 (0.392) seconds
 Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (0.003 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' started.
 Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.001 seconds).
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.014) seconds
+Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.002 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.008 (0.011) seconds
 Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (3.245 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' started.
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.154 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' started.
 Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.001 seconds).
-	 Executed 6 tests, with 0 failures (0 unexpected) in 3.251 (3.256) seconds
+Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.000 seconds).
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.157 (0.159) seconds
 Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.013 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' started.
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.000 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' started.
 Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' passed (0.001 seconds).
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.005 (0.008) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.016 (0.017) seconds
 Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' passed (0.001 seconds).
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.020) seconds
 Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.004 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.000 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.038 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' started.
 Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' started.
 Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' passed (0.001 seconds).
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.005 (0.008) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.044 (0.046) seconds
 Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' started.
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' started.
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.005 seconds).
 Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' started.
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (0.313 seconds).
+Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' started.
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (2.341 seconds).
+Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (3.019 seconds).
 Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' started.
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.008 seconds).
 Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' started.
 Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' started.
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' started.
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.010 seconds).
 Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' started.
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.033 seconds).
-	 Executed 9 tests, with 0 failures (0 unexpected) in 2.700 (2.703) seconds
+Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.008 seconds).
+	 Executed 9 tests, with 0 failures (0 unexpected) in 3.055 (3.106) seconds
 Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.003 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.012 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.005 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.000 seconds).
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.016 (0.017) seconds
-	 Executed 49 tests, with 0 failures (0 unexpected) in 6.121 (6.755) seconds
-	 Executed 49 tests, with 0 failures (0 unexpected) in 6.121 (6.785) seconds
+Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.001 seconds).
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.015 (0.020) seconds
+	 Executed 55 tests, with 0 failures (0 unexpected) in 3.623 (4.434) seconds
+	 Executed 55 tests, with 0 failures (0 unexpected) in 3.623 (4.634) seconds
 ** TEST SUCCEEDED **
 ---
-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
-    cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    builtin-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app
-
-Validate /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
-    cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    builtin-validationUtility /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app -shallow-bundle -infoplist-subpath Info.plist
-
-Touch /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app (in target 'Crowdography' from project 'Crowdography')
-    cd /Users/runner/work/crowdography-app/crowdography-app/ios
-    /usr/bin/touch -c /Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Build/Products/Debug-iphonesimulator/Crowdography.app
-
-Test Suite 'All tests' started at 2026-11-27 02:57:45.680.
-Test Suite 'CrowdographyTests.xctest' started at 2026-11-27 02:57:45.683.
-Test Suite 'CameraPathTests' started at 2026-11-27 02:57:45.683.
 Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testCameraDirectionFromOrientation]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testClockReadingUsesTheMiddleOfTheTrip]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testClockReadingUsesTheMiddleOfTheTrip]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testDataTrackTexts]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testDataTrackTexts]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testInitials]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testInitials]' passed (0.119 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testInitials]' passed (0.289 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testMapShowsOnlyCamerasFilmingAtTheMoment]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testMapShowsOnlyCamerasFilmingAtTheMoment]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testMovingFastFallsBackToTheDirectionOfTravel]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testPoseBetweenReadings]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.CameraPathTests testStatementCarriesThePathAndClockOnlyWhenPresent]' passed (0.004 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testThePathFileReadsBack]' started.
 Test Case '-[CrowdographyTests.CameraPathTests testThePathFileReadsBack]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' started.
-Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' passed (0.003 seconds).
-Test Suite 'CameraPathTests' passed at 2026-11-27 02:57:46.420.
-	 Executed 10 tests, with 0 failures (0 unexpected) in 0.134 (0.738) seconds
-Test Suite 'FootageItemTests' started at 2026-11-27 02:57:46.421.
+Test Case '-[CrowdographyTests.CameraPathTests testTimesShowInTheClipsOwnZone]' passed (0.007 seconds).
+Test Suite 'CameraPathTests' passed at 2026-11-27 03:45:11.225.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.307 (0.661) seconds
+Test Suite 'FootageByDayAndPlaceTests' started at 2026-11-27 03:45:11.226.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testCopiesWaitForAVerifiedClipAndPhotosNeedOnlyTheirDirection]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testCopiesWaitForAVerifiedClipAndPhotosNeedOnlyTheirDirection]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testFullLengthPieces]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testFullLengthPieces]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testGroupsByDayThenPlace]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testGroupsByDayThenPlace]' passed (0.010 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testMomentsReadLikeGroups]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testMomentsReadLikeGroups]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testPhotosShowOnTheMapNearTheirMoment]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testPhotosShowOnTheMapNearTheirMoment]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testTheDayIsTheDayWhereItWasFilmed]' started.
+Test Case '-[CrowdographyTests.FootageByDayAndPlaceTests testTheDayIsTheDayWhereItWasFilmed]' passed (0.001 seconds).
+Test Suite 'FootageByDayAndPlaceTests' passed at 2026-11-27 03:45:11.617.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.018 (0.392) seconds
+Test Suite 'FootageItemTests' started at 2026-11-27 03:45:11.618.
 Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.FootageItemTests testALinkGoesStaleBeforeTheServerEndsIt]' passed (0.003 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' started.
 Test Case '-[CrowdographyTests.FootageItemTests testAnEntryWithoutItsIdOrTimeIsLeftOut]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.FootageItemTests testReadsAPhotoThatFailedItsCheck]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' started.
-Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.001 seconds).
-Test Suite 'FootageItemTests' passed at 2026-11-27 02:57:46.434.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.004 (0.014) seconds
-Test Suite 'GroupTimelineTests' started at 2026-11-27 02:57:46.434.
+Test Case '-[CrowdographyTests.FootageItemTests testReadsAVideoPiece]' passed (0.002 seconds).
+Test Suite 'FootageItemTests' passed at 2026-11-27 03:45:11.628.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.008 (0.011) seconds
+Test Suite 'GroupTimelineTests' started at 2026-11-27 03:45:11.629.
 Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (3.245 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testNothingLeft]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAGroup]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' started.
 Test Case '-[CrowdographyTests.GroupTimelineTests testReadsAnAngle]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.GroupTimelineTests testSwitchesToTheClosestAngleStillRunning]' passed (0.154 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' started.
 Test Case '-[CrowdographyTests.GroupTimelineTests testWhenNothingIsRunningJumpsToTheNextAngleToStart]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' started.
-Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.001 seconds).
-Test Suite 'GroupTimelineTests' passed at 2026-11-27 02:57:49.690.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 3.251 (3.256) seconds
-Test Suite 'LoginNameTests' started at 2026-11-27 02:57:49.690.
+Test Case '-[CrowdographyTests.GroupTimelineTests testWithoutPlacesTakesTheLongestRunning]' passed (0.000 seconds).
+Test Suite 'GroupTimelineTests' passed at 2026-11-27 03:45:11.788.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.157 (0.159) seconds
+Test Suite 'LoginNameTests' started at 2026-11-27 03:45:11.788.
 Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testANumberIsNotALoginWhileTextingIsOff]' passed (0.013 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testReadsAMobileNumberHoweverItIsTyped]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' started.
 Test Case '-[CrowdographyTests.LoginNameTests testReadsAnEmailAddress]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' started.
-Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.LoginNameTests testRefusesThingsThatAreNotMobileNumbers]' passed (0.000 seconds).
 Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' started.
 Test Case '-[CrowdographyTests.LoginNameTests testWhatIsSentAndWhatIsShown]' passed (0.001 seconds).
-Test Suite 'LoginNameTests' passed at 2026-11-27 02:57:49.698.
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.005 (0.008) seconds
-Test Suite 'PasswordRuleTests' started at 2026-11-27 02:57:49.698.
+Test Suite 'LoginNameTests' passed at 2026-11-27 03:45:11.805.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.016 (0.017) seconds
+Test Suite 'PasswordRuleTests' started at 2026-11-27 03:45:11.805.
 Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' started.
-Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.PasswordRuleTests testAcceptsLongEnoughPasswords]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesShortLongAndEmpty]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTheEmailAddressItself]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' started.
 Test Case '-[CrowdographyTests.PasswordRuleTests testRefusesTooFewDifferentCharacters]' passed (0.001 seconds).
-Test Suite 'PasswordRuleTests' passed at 2026-11-27 02:57:49.706.
-	 Executed 4 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
-Test Suite 'PersonNameTests' started at 2026-11-27 02:57:49.709.
+Test Suite 'PasswordRuleTests' passed at 2026-11-27 03:45:11.825.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.020) seconds
+Test Suite 'PersonNameTests' started at 2026-11-27 03:45:11.825.
 Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.002 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testAcceptsRealNames]' passed (0.004 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testEightyCharactersIsTheLimit]' passed (0.000 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' started.
-Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.PersonNameTests testJoinsAccentsTheWayTheServerDoes]' passed (0.038 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' started.
 Test Case '-[CrowdographyTests.PersonNameTests testRefusesThingsThatAreNotNames]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' started.
 Test Case '-[CrowdographyTests.PersonNameTests testTidiesSpaces]' passed (0.001 seconds).
-Test Suite 'PersonNameTests' passed at 2026-11-27 02:57:49.716.
-	 Executed 5 tests, with 0 failures (0 unexpected) in 0.005 (0.008) seconds
-Test Suite 'StatementTests' started at 2026-11-27 02:57:49.717.
+Test Suite 'PersonNameTests' passed at 2026-11-27 03:45:11.871.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.044 (0.046) seconds
+Test Suite 'StatementTests' started at 2026-11-27 03:45:11.872.
 Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' started.
-Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.StatementTests testAppleCheckClientData]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' started.
-Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.003 seconds).
+Test Case '-[CrowdographyTests.StatementTests testCameraExceptionsBecomeErrorsInsteadOfClosingTheApp]' passed (0.005 seconds).
 Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' started.
-Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (0.313 seconds).
+Test Case '-[CrowdographyTests.StatementTests testContinuedPieceNamesThePreviousOne]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' started.
-Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (2.341 seconds).
+Test Case '-[CrowdographyTests.StatementTests testFileHashStreams]' passed (3.019 seconds).
 Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' started.
-Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.StatementTests testNoncesAreOneTimeAndWellFormed]' passed (0.008 seconds).
 Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' started.
 Test Case '-[CrowdographyTests.StatementTests testOnlyKnownFields]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' started.
-Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.StatementTests testRequestSigningText]' passed (0.001 seconds).
 Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' started.
-Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.004 seconds).
+Test Case '-[CrowdographyTests.StatementTests testSignaturesAreDerP256OverTheExactBytes]' passed (0.010 seconds).
 Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' started.
-Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.033 seconds).
-Test Suite 'StatementTests' passed at 2026-11-27 02:57:52.420.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 2.700 (2.703) seconds
-Test Suite 'ViewingCopyTests' started at 2026-11-27 02:57:52.420.
+Test Case '-[CrowdographyTests.StatementTests testTimesLookLikeTheServerWants]' passed (0.008 seconds).
+Test Suite 'StatementTests' passed at 2026-11-27 03:45:14.977.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 3.055 (3.106) seconds
+Test Suite 'ViewingCopyTests' started at 2026-11-27 03:45:14.977.
 Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testCellsSitInATenBySixGrid]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testFillsFourScreensWithWhatIsRunning]' passed (0.003 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.012 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testFindsTheFrameForEachSecond]' passed (0.005 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.001 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testNeverShowsOneAngleTwice]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.000 seconds).
+Test Case '-[CrowdographyTests.ViewingCopyTests testReadsTheCopies]' passed (0.002 seconds).
 Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' started.
-Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.000 seconds).
-Test Suite 'ViewingCopyTests' passed at 2026-11-27 02:57:52.437.
-	 Executed 6 tests, with 0 failures (0 unexpected) in 0.016 (0.017) seconds
-Test Suite 'CrowdographyTests.xctest' passed at 2026-11-27 02:57:52.438.
-	 Executed 49 tests, with 0 failures (0 unexpected) in 6.121 (6.755) seconds
-Test Suite 'All tests' passed at 2026-11-27 02:57:52.465.
-	 Executed 49 tests, with 0 failures (0 unexpected) in 6.121 (6.785) seconds
-2026-11-27 02:57:57.014 xcodebuild[3400:13971] [MT] IDETestOperationsObserverDebug: 147.402 elapsed -- Testing started completed.
-2026-11-27 02:57:57.104 xcodebuild[3400:13971] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-11-27 02:57:57.104 xcodebuild[3400:13971] [MT] IDETestOperationsObserverDebug: 147.402 sec, +147.402 sec -- end
+Test Case '-[CrowdographyTests.ViewingCopyTests testWithoutCopiesTheOriginalIsUsed]' passed (0.001 seconds).
+Test Suite 'ViewingCopyTests' passed at 2026-11-27 03:45:14.997.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.015 (0.020) seconds
+Test Suite 'CrowdographyTests.xctest' passed at 2026-11-27 03:45:14.998.
+	 Executed 55 tests, with 0 failures (0 unexpected) in 3.623 (4.434) seconds
+Test Suite 'All tests' passed at 2026-11-27 03:45:15.197.
+	 Executed 55 tests, with 0 failures (0 unexpected) in 3.623 (4.634) seconds
+2026-11-27 03:45:17.192 xcodebuild[1780:9159] [MT] IDETestOperationsObserverDebug: 186.995 elapsed -- Testing started completed.
+2026-11-27 03:45:17.192 xcodebuild[1780:9159] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-27 03:45:17.192 xcodebuild[1780:9159] [MT] IDETestOperationsObserverDebug: 186.995 sec, +186.995 sec -- end
 
 Test session results, code coverage, and logs:
-	/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Logs/Test/Test-Crowdography-2026.11.27_02-55-01-+0000.xcresult
+	/Users/runner/Library/Developer/Xcode/DerivedData/Crowdography-daborqeneappjvbtbaxuncgrfmss/Logs/Test/Test-Crowdography-2026.11.27_03-41-37-+0000.xcresult
 
 ** TEST SUCCEEDED **
 
