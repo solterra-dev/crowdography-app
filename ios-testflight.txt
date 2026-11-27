@@ -1,33 +1,30 @@
-commit 52f3fc6d3376085924e5c49198193294be8eee8a  build 20  result success  key ready: yes  Fri Nov 27 02:02:38 UTC 2026
-** ARCHIVE SUCCEEDED **
-2026-11-27 02:02:38.116 xcodebuild[3382:20997] Progress 100%: Upload succeeded.
-warning: exportArchive App Store Connect Warning. Apple Vision Pro support issue. The app contains the following UIRequiredDeviceCapabilities values, which aren’t supported in visionOS: [still-camera].
-warning: exportArchive App Store Connect Warning. SDK version issue. This app was built with the iOS 26.5 SDK. Starting April 2027, iOS and iPadOS apps must be built with the iOS 27 SDK or later, included in Xcode 27 or later, in order to be uploaded to App Store Connect or submitted for distribution.
-Uploaded Crowdography
-** EXPORT SUCCEEDED **
+commit 6e1f812ea34121cf8d198f08f193a50caccb7086  build 21  result failure  key ready: yes  Fri Nov 27 02:52:41 UTC 2026
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:94:19: error: heterogeneous collection literal could only be inferred to '[Any]'; add explicit type annotation if this is intentional
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
+** ARCHIVE FAILED **
 ---
-2026-11-27 02:01:16.560 xcodebuild[3382:14107] Progress 0%: Preparing to upload ‘Crowdography.ipa’…
-2026-11-27 02:01:44.384 xcodebuild[3382:14107] Progress 0%: Analyzing package…
-2026-11-27 02:01:46.229 xcodebuild[3382:14101] Progress 0%: Sending analysis to App Store Connect…
-2026-11-27 02:01:47.921 xcodebuild[3382:14107] Progress 0%: Waiting for App Store Connect analysis response…
-2026-11-27 02:01:49.257 xcodebuild[3382:14107] Progress 0%: Waiting for App Store Connect analysis response…
-2026-11-27 02:02:16.488 xcodebuild[3382:20997] Progress 0%: Sending SPI analysis to App Store Connect…
-2026-11-27 02:02:18.099 xcodebuild[3382:20997] Progress 0%: Waiting for App Store Connect SPI analysis response…
-2026-11-27 02:02:19.413 xcodebuild[3382:20997] Progress 0%: Waiting for App Store Connect SPI analysis response…
-2026-11-27 02:02:34.963 xcodebuild[3382:20997] Progress 0%: Requesting upload instructions from App Store Connect…
-2026-11-27 02:02:36.133 xcodebuild[3382:20997] Progress 0%: Preparing file for upload to App Store Connect…
-2026-11-27 02:02:36.144 xcodebuild[3382:20997] Progress 0%: Preparing file for upload to App Store Connect…
-2026-11-27 02:02:36.145 xcodebuild[3382:20997] Progress 0%: Uploading to App Store Connect…
-2026-11-27 02:02:36.159 xcodebuild[3382:20997] Progress 100%: Uploading to App Store Connect…
-2026-11-27 02:02:36.161 xcodebuild[3382:20997] Progress 100%: Uploading to App Store Connect…
-2026-11-27 02:02:36.473 xcodebuild[3382:20997] Progress 100%: Completing upload…
-2026-11-27 02:02:37.779 xcodebuild[3382:20997] Progress 100%: Waiting for package to begin processing…
-2026-11-27 02:02:38.111 xcodebuild[3382:20997] Progress 100%: Uploaded package is processing.
-2026-11-27 02:02:38.116 xcodebuild[3382:20997] Progress 100%: Upload succeeded.
-warning: exportArchive App Store Connect Warning. Apple Vision Pro support issue. The app contains the following UIRequiredDeviceCapabilities values, which aren’t supported in visionOS: [still-camera].
+                                                               ?? <#default value#>
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: force-unwrap the value to avoid this warning
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+                                                              !
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:95:58: note: explicitly cast to 'Any' with 'as Any' to silence this warning
+                   compass, h.map { $0.headingAccuracy } ?? -1]
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+                                                               as Any
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: error: cannot convert value of type '[Any]' to expected argument type '[Double]'
+        for s in segments.values { s.aim.append(row) }
+                                                ^
+                                                    as! [Double]
+/Users/runner/work/crowdography-app/crowdography-app/ios/Crowdography/Capture/PathRecorder.swift:96:49: note: arguments to generic parameter 'Element' ('Any' and 'Double') are expected to be equal
+        for s in segments.values { s.aim.append(row) }
+                                                ^
 
-warning: exportArchive App Store Connect Warning. SDK version issue. This app was built with the iOS 26.5 SDK. Starting April 2027, iOS and iPadOS apps must be built with the iOS 27 SDK or later, included in Xcode 27 or later, in order to be uploaded to App Store Connect or submitted for distribution.
+** ARCHIVE FAILED **
 
-Uploaded Crowdography
-** EXPORT SUCCEEDED **
 
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ APIClient.swift,\ AppModel.swift,\ BackgroundUploader.swift,\ CameraController.swift,\ CameraPath.swift,\ CameraPreview.swift,\ CameraScreen.swift,\ CaptureJob.swift,\ CaptureKey.swift,\ ClockCheck.swift,\ Config.swift,\ CopyMaker.swift,\ CrowdographyApp.swift,\ DeviceRegistrar.swift,\ ExceptionGuard.swift,\ FootageItem.swift,\ FootageLibrary.swift,\ FootageViewer.swift,\ GroupMapView.swift,\ GroupModels.swift,\ GroupWatchView.swift,\ GroupsView.swift,\ Hex.swift,\ HomeView.swift,\ JoinSheet.swift,\ Keychain.swift,\ LocationProvider.swift,\ LoginName.swift
+	CompileSwift normal arm64 (in target 'Crowdography' from project 'Crowdography')
+	Archiving project Crowdography with scheme Crowdography
+(3 failures)
