@@ -215,12 +215,21 @@ final class Recorder: ObservableObject {
             do {
                 let t = try await takeTicket()
                 let at = Date()
+                // Build 24 (Jeff 2026-11-26): which way the camera points as the shutter fires, read while the photo is taken.
+                if !isRecording { location.startHeading() }
+                let aim = Task { await self.path.snapshot(location: fix) }
                 let data = try await camera.capturePhoto()
-                let name = UUID().uuidString + ".heic"
+                let pathData = await aim.value
+                if !isRecording { location.stopHeading() }
+                let base = UUID().uuidString, name = base + ".heic"
                 try data.write(to: CaptureStore.fileURL(name), options: .atomic)
-                queue.add(CaptureJob(id: UUID().uuidString, fileName: name, mimeType: "image/heic", chainId: UUID().uuidString,
+                var job = CaptureJob(id: UUID().uuidString, fileName: name, mimeType: "image/heic", chainId: UUID().uuidString,
                                      segmentNo: 1, ticket: t, startedAt: at, endedAt: at,
-                                     lat: fix.coordinate.latitude, lng: fix.coordinate.longitude, accuracyM: fix.horizontalAccuracy))
+                                     lat: fix.coordinate.latitude, lng: fix.coordinate.longitude, accuracyM: fix.horizontalAccuracy)
+                if let pathData, (try? pathData.write(to: CaptureStore.fileURL(base + ".path.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])) != nil {
+                    job.pathFileName = base + ".path.json"; job.pathSha256 = Hash.sha256Hex(pathData)
+                }
+                queue.add(job)
                 saveToLibrary(CaptureStore.fileURL(name), isVideo: false, takenAt: at, place: fix)
             } catch {
                 problem = "Photo not taken: " + error.localizedDescription

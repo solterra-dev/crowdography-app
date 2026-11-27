@@ -12,6 +12,8 @@ struct HomeView: View {
     @State private var viewing: FootageItem?
     @State private var askSignOut = false
     @State private var signOutProblem: String?
+    /// Place names and time zones looked up so far (build 24: footage grouped by day and by place).
+    @State private var places: [String: TimeZoneBook.Place] = [:]
 
     private let columns = [GridItem(.adaptive(minimum: 110), spacing: 2)]
 
@@ -24,9 +26,12 @@ struct HomeView: View {
                         Text(problem).font(.footnote).foregroundStyle(.orange).multilineTextAlignment(.center).padding(.horizontal)
                     }
                     if !library.items.isEmpty {
-                        LazyVGrid(columns: columns, spacing: 2) {
-                            ForEach(library.items) { tile($0) }
+                        LazyVGrid(columns: columns, spacing: 2, pinnedViews: [.sectionHeaders]) {
+                            ForEach(FootageSections.group(library.items, zoneFor: { k in k.flatMap { places[$0]?.zone } })) { s in
+                                Section { ForEach(s.items) { tile($0) } } header: { sectionHeader(s) }
+                            }
                         }
+                        .task(id: library.items.count) { await lookUpPlaces() }
                     } else if !library.loadedOnce {
                         ProgressView().padding(.top, 80)
                     } else if library.problem == nil {
@@ -77,6 +82,31 @@ struct HomeView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(signOutProblem ?? "")
+        }
+    }
+
+    private func sectionHeader(_ s: FootageSection) -> some View {
+        HStack(spacing: 6) {
+            Text(FootageSections.dayTitle(s)).font(.subheadline.weight(.semibold))
+            if let k = s.placeKey {
+                Text("·").foregroundStyle(.secondary)
+                Label(places[k]?.name ?? "Finding the place…", systemImage: "mappin.and.ellipse").font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+            } else {
+                Text("· Place unknown").font(.subheadline).foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 12).padding(.vertical, 8)
+        .background(.black.opacity(0.85))
+    }
+
+    /// Looks up each place once (a town or so apart), for its name and time zone.
+    private func lookUpPlaces() async {
+        var seen = Set(places.keys)
+        for item in library.items {
+            guard let k = FootageSections.placeKey(item), !seen.contains(k), let la = item.lat, let lo = item.lng else { continue }
+            seen.insert(k)
+            if let p = await TimeZoneBook.shared.place(lat: la, lng: lo) { places[k] = p }
         }
     }
 

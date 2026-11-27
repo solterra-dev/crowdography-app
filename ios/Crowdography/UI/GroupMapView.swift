@@ -33,13 +33,16 @@ struct CameraMarker: Identifiable, Equatable {
 }
 
 enum GroupMap {
-    /// Every video running at moment t, placed where it was at that moment and turned the way it pointed. The angle being
-    /// watched is always shown. With no moment yet, every video at its starting place.
+    /// A photo shows on the map this long either side of the moment it was taken (build 24).
+    static let photoShownMs = 5000
+
+    /// Every video running at moment t, and every photo taken within 5 seconds of it, placed where it was at that moment and
+    /// turned the way it pointed. The angle being watched is always shown. With no moment yet, everything at its start.
     static func markers(_ clips: [GroupClip], paths: [String: CameraPath], at t: Int?, current: String?) -> [CameraMarker] {
         clips.compactMap { c in
-            guard c.isVideo else { return nil }
             let isCurrent = c.id == current
-            guard t == nil || isCurrent || c.covers(t!) else { return nil }
+            let showing = c.isVideo ? t.map { c.covers($0) } ?? true : t.map { abs($0 - c.startMs) <= photoShownMs } ?? true
+            guard isCurrent || showing else { return nil }
             let offset = Double(min(max((t ?? c.startMs) - c.startMs, 0), c.endMs - c.startMs))
             if let pose = paths[c.id]?.pose(at: offset) {
                 return CameraMarker(id: c.id, clip: c, lat: pose.lat, lng: pose.lng, azimuth: pose.azimuth, isCurrent: isCurrent)
@@ -58,6 +61,20 @@ enum GroupMap {
     }
 }
 
+/// The black "C" around each person's circle (Jeff 2026-11-26, from the Crowdography logo). Its opening faces east before
+/// it is turned, the way the logo's C opens to the right.
+struct LogoC: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        let c = CGPoint(x: r.midX, y: r.midY), radius = min(r.width, r.height) / 2
+        for (i, a) in stride(from: 38.0, through: 322.0, by: 4.0).enumerated() {
+            let pt = CGPoint(x: c.x + radius * cos(a * .pi / 180), y: c.y + radius * sin(a * .pi / 180))
+            if i == 0 { p.move(to: pt) } else { p.addLine(to: pt) }
+        }
+        return p
+    }
+}
+
 /// The wedge showing what the camera could see, pointing north before it is turned.
 struct ViewCone: Shape {
     func path(in r: CGRect) -> Path {
@@ -70,30 +87,30 @@ struct ViewCone: Shape {
     }
 }
 
-/// A video camera symbol with the person's initials in it, turned the way the camera pointed.
-struct CameraSymbol: View {
+/// One person on the map (Jeff 2026-11-26): the Crowdography mark. A red circle with their initials on top, inside a black
+/// C whose opening faces the way their camera pointed. The angle being watched is larger and shows what its camera saw.
+/// When the direction is unknown (clips filmed before build 23) the C opens to the right, like the logo, and is lighter.
+struct CrowdMarker: View {
+    static let red = Color(red: 0.93, green: 0.27, blue: 0.24)
     let initials: String
     let azimuth: Double?
     let current: Bool
 
     var body: some View {
-        let turn = (azimuth ?? 90) - 90   // the symbol's lens faces east before it is turned
-        let color: Color = current ? .red : .blue
-        return ZStack {
-            if let az = azimuth {
-                ViewCone().fill(color.opacity(0.22)).frame(width: 84, height: 84).rotationEffect(.degrees(az))
+        ZStack {
+            if current, let az = azimuth {
+                ViewCone().fill(Self.red.opacity(0.22)).frame(width: 96, height: 96).rotationEffect(.degrees(az))
             }
-            ZStack {
-                Image(systemName: "video.fill").font(.system(size: 30)).foregroundStyle(color)
-                    .shadow(color: .black.opacity(0.4), radius: 1)
-                Text(initials).font(.system(size: 9, weight: .heavy)).foregroundStyle(.white)
-                    .rotationEffect(.degrees(-turn)).offset(x: -3)
-            }
-            .rotationEffect(.degrees(turn))
-            .opacity(azimuth == nil ? 0.75 : 1)
+            Circle().fill(.white).frame(width: 40, height: 40)
+            LogoC().stroke(.black, style: StrokeStyle(lineWidth: 5, lineCap: .butt)).frame(width: 38, height: 38)
+                .rotationEffect(.degrees((azimuth ?? 90) - 90))
+            Circle().fill(Self.red).frame(width: 27, height: 27)
+            Text(initials).font(.system(size: 11, weight: .heavy)).foregroundStyle(.white).minimumScaleFactor(0.6).lineLimit(1).frame(width: 24)
         }
-        .frame(width: 84, height: 84)
-        .scaleEffect(current ? 1.15 : 1)
+        .frame(width: 96, height: 96)
+        .opacity(azimuth == nil ? 0.8 : 1)
+        .scaleEffect(current ? 1.2 : 0.95)
+        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
     }
 }
 
@@ -111,7 +128,7 @@ struct GroupMapView: View {
         return Map(position: $position, interactionModes: [.pan, .zoom]) {   // no turning, so north stays up and the symbols stay true
             ForEach(marks) { m in
                 Annotation(m.clip.filmedBy ?? "Someone", coordinate: CLLocationCoordinate2D(latitude: m.lat, longitude: m.lng), anchor: .center) {
-                    CameraSymbol(initials: Initials.of(m.clip.filmedBy), azimuth: m.azimuth, current: m.isCurrent)
+                    CrowdMarker(initials: Initials.of(m.clip.filmedBy), azimuth: m.azimuth, current: m.isCurrent)
                         .onTapGesture { Task { await playback.select(m.clip) } }
                         .accessibilityLabel("\(m.clip.filmedBy ?? "Someone")'s camera")
                 }

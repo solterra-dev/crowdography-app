@@ -59,7 +59,7 @@ final class GroupPlayback: ObservableObject {
             clip = clips.first(where: { $0.id == c.id }) ?? c
         }
         if let u = tile ? clip.tileScreenURL : clip.bigScreenURL, Date().timeIntervalSince(fetchedAt) < 1500 { return u }
-        return try? await model.groupLink(c.id)
+        return try? await model.groupLink(c.id, in: groupId)
     }
 
     /// Back from the four-screen view: play this angle on the big screen from that moment.

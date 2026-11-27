@@ -61,6 +61,19 @@ final class PathRecorder {
         return CameraPath.encode(startedAt: Date(timeIntervalSince1970: seg.startMs / 1000), frame: frameName, loc: loc, aim: aim)
     }
 
+    /// For a photo (build 24): where the phone is and which way the camera points as the shutter fires. Readings for about
+    /// half a second around the photo; the place is the location the photo is proven with.
+    func snapshot(location fix: CLLocation?) async -> Data? {
+        let key = URL(fileURLWithPath: "/photo/" + UUID().uuidString)
+        begin(key)
+        if let f = fix {
+            location(CLLocation(coordinate: f.coordinate, altitude: f.altitude, horizontalAccuracy: f.horizontalAccuracy, verticalAccuracy: f.verticalAccuracy,
+                                course: f.course, speed: f.speed, timestamp: Date()))
+        }
+        try? await Task.sleep(nanoseconds: 450_000_000)
+        return finish(key, endedAt: Date())
+    }
+
     func location(_ l: CLLocation) {
         guard !segments.isEmpty, l.horizontalAccuracy >= 0 else { return }
         let row = [l.timestamp.timeIntervalSince1970 * 1000, l.coordinate.latitude, l.coordinate.longitude, l.horizontalAccuracy,

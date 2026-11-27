@@ -24,6 +24,13 @@ struct CaptureKey {
         return CaptureKey(key: k)
     }
 
+    /// The existing key only, never a new one: used when iOS wakes the app in the background (build 24).
+    static func loadExisting() -> CaptureKey? {
+        guard SecureEnclave.isAvailable, let sealed = Keychain.read(account),
+              let k = try? SecureEnclave.P256.Signing.PrivateKey(dataRepresentation: sealed) else { return nil }
+        return CaptureKey(key: k)
+    }
+
     /// Throws away the key, for example when the server refused to register it. A new one is made next time.
     static func discard() { Keychain.delete(account) }
 

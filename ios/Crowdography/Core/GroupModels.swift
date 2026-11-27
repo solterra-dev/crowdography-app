@@ -12,6 +12,10 @@ struct GroupSummary: Identifiable, Equatable, Hashable {
     let joinCode: String?
     let clipCount: Int
     let phoneCount: Int
+    /// Build 24: a moment, made automatically from clips filmed near each other at the same time outside any group.
+    let isMoment: Bool
+    let lat: Double?
+    let lng: Double?
 
     init?(_ d: [String: Any]) {
         guard let id = d["gathering_id"] as? String, !id.isEmpty, let name = d["gathering_name"] as? String,
@@ -23,6 +27,9 @@ struct GroupSummary: Identifiable, Equatable, Hashable {
         joinCode = d["join_code"] as? String
         clipCount = GroupClip.int(d["clip_count"]) ?? 0
         phoneCount = GroupClip.int(d["phone_count"]) ?? 0
+        isMoment = (d["kind"] as? String) == "moment" || id.hasPrefix("moment-")
+        lat = (d["lat"] as? NSNumber)?.doubleValue
+        lng = (d["lng"] as? NSNumber)?.doubleValue
     }
 }
 

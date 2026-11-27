@@ -9,6 +9,8 @@ struct GroupsView: View {
     @State private var problem: String?
     @State private var showStart = false
     @State private var showJoin = false
+    @State private var moments: [GroupSummary] = []
+    @State private var sharing: Bool?
 
     var body: some View {
         NavigationStack {
@@ -24,6 +26,20 @@ struct GroupsView: View {
                         Text(name)
                         Button("Stop filming into this group", role: .destructive) { model.leaveGathering() }
                     }
+                }
+                Section {
+                    Toggle("Share with others filming nearby", isOn: Binding(get: { sharing ?? false }, set: { on in Task { await setSharing(on) } }))
+                        .disabled(sharing == nil)
+                    if sharing == true {
+                        if moments.isEmpty { Text("Nobody else has filmed near you at the same time yet.").font(.footnote).foregroundStyle(.secondary) }
+                        ForEach(moments) { m in
+                            NavigationLink { GroupWatchView(summary: m, model: model) } label: { row(m) }
+                        }
+                    }
+                } header: {
+                    Text("Filmed nearby")
+                } footer: {
+                    Text("When this is on, people who film near you at the same time outside a group can watch your clips from then, with your name, where you were and which way you filmed, and you can watch theirs. Anyone who has it off is never shown.")
                 }
                 Section("Your groups") {
                     if let problem { Text(problem).font(.footnote).foregroundStyle(.orange) }
@@ -46,6 +62,13 @@ struct GroupsView: View {
     private func load() async {
         do { groups = try await model.myGroups(); problem = nil } catch { problem = error.localizedDescription }
         loaded = true
+        if let on = try? await model.nearbySharing() { sharing = on; moments = on ? ((try? await model.myMoments()) ?? []) : [] }
+    }
+
+    private func setSharing(_ on: Bool) async {
+        let was = sharing; sharing = nil
+        do { sharing = try await model.nearbySharing(set: on); moments = sharing == true ? ((try? await model.myMoments()) ?? []) : [] }
+        catch { sharing = was; problem = error.localizedDescription }
     }
 
     private func row(_ g: GroupSummary) -> some View {

@@ -13,7 +13,8 @@ struct Ticket: Codable, Equatable {
 
 /// One clip piece or photo waiting to be proven and stored. Saved to disk so nothing is lost if the app is closed.
 struct CaptureJob: Codable, Identifiable, Equatable {
-    enum Stage: String, Codable { case waiting, hashing, uploading, submitting, verified, rejected, failed }
+    /// checking (build 24): the server took the statement and is checking a big file in the background.
+    enum Stage: String, Codable { case waiting, hashing, uploading, submitting, checking, verified, rejected, failed }
 
     let id: String
     let fileName: String
@@ -52,11 +53,17 @@ struct CaptureJob: Codable, Identifiable, Equatable {
     /// next to the clip. Its sha256 is signed with the clip, so the path cannot be changed later.
     var pathFileName: String? = nil
     var pathSha256: String? = nil
+    /// Build 24: when the phone last asked the server how a background check is going.
+    var checkAskedAt: Date? = nil
 
     var isDone: Bool { stage == .verified || stage == .rejected }
     var isPhoto: Bool { mimeType.hasPrefix("image/") }
     /// A verified video whose viewing copies are not made yet, with its working file still on the phone.
-    var needsCopies: Bool { !isPhoto && stage == .verified && captureId != nil && copiesDone != true && !localCopyRemoved }
+    /// Build 24: a photo needs only its signed camera direction sent; a video needs that and its viewing copies.
+    var needsCopies: Bool {
+        guard stage == .verified, captureId != nil, copiesDone != true else { return false }
+        return isPhoto ? pathFileName != nil : !localCopyRemoved
+    }
 }
 
 /// Where pieces and the job list live: the app's own private folder, left out of iCloud backups.

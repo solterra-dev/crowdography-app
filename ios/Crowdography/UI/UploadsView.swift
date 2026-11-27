@@ -65,6 +65,7 @@ struct UploadsView: View {
         case .hashing: return "Sealing"
         case .uploading: return "Uploading"
         case .submitting: return "Checking"
+        case .checking: return "Being checked on the server"
         case .verified: return "Verified"
         case .rejected: return "Not verified"
         case .failed: return "Will retry"

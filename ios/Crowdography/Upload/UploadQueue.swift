@@ -7,6 +7,8 @@ import UIKit
 /// A continued piece waits for the piece before it, because its statement names that piece's proof.
 @MainActor
 final class UploadQueue: ObservableObject {
+    /// One queue for the whole app, so iOS can wake it in the background without the screens (build 24).
+    static let shared = UploadQueue()
     @Published private(set) var jobs: [CaptureJob] = CaptureStore.loadJobs()
     private var running = false
     private var again = false
@@ -25,6 +27,16 @@ final class UploadQueue: ObservableObject {
     }
 
     var pendingCount: Int { jobs.filter { !$0.isDone }.count }
+    /// Anything still to do: an upload, a check to hear back about, or copies to make and send.
+    var hasWaitingWork: Bool { jobs.contains { !$0.isDone || $0.needsCopies } }
+    /// Working right now (used to decide how long to keep background time).
+    var isBusy: Bool { running || copying || jobs.contains { $0.stage == .uploading || $0.stage == .checking || $0.stage == .submitting } }
+
+    /// When iOS wakes the app in the background, before any screen has started: the phone's saved identity, never a new one.
+    func attachFromKeychain() {
+        guard deviceId == nil, let id = DeviceRegistrar.savedDeviceId, let k = CaptureKey.loadExisting() else { return }
+        attach(deviceId: id, key: k)
+    }
 
     func attach(deviceId: String, key: CaptureKey) {
         self.deviceId = deviceId
@@ -72,6 +84,23 @@ final class UploadQueue: ObservableObject {
         var job = jobs[i]
         let file = CaptureStore.fileURL(job.fileName)
         do {
+            // Build 24: a big file is being checked by the server in the background; ask how it is going now and then.
+            if job.stage == .checking, let cid = job.captureId {
+                if let t = job.checkAskedAt, Date().timeIntervalSince(t) < 15 { return false }
+                job.checkAskedAt = Date()
+                let r = try await api.postSigned("/v1/crowd/captures/status", ["capture_id": cid], deviceId: deviceId, key: key).body
+                switch r["status"] as? String {
+                case "verified": job.stage = .verified
+                case "rejected":
+                    job.stage = .rejected
+                    let checks = r["checks"] as? [[String: Any]] ?? []
+                    job.failedChecks = checks.filter { ($0["passed"] as? Bool) == false }.compactMap { $0["check"] as? String }
+                    job.lastProblem = "Chronum could not verify this piece: " + job.failedChecks.joined(separator: ", ")
+                default:
+                    update(i, job); scheduleRetry(after: 20); return false
+                }
+                update(i, job); return true
+            }
             if job.sha256 == nil {
                 job.stage = .hashing; update(i, job)
                 let h = try await Task.detached(priority: .utility) { try Hash.sha256HexOfFile(file) }.value
@@ -119,6 +148,11 @@ final class UploadQueue: ObservableObject {
                                              ["media_asset_id": job.mediaAssetId!, "statement": String(decoding: bytes, as: UTF8.self), "signature": sig],
                                              deviceId: deviceId, key: key)
             job.captureId = r.body["capture_id"] as? String
+            if r.status == 202 {   // build 24: a big file; the server checks it in the background, even if this phone is closed
+                job.stage = .checking; job.checkAskedAt = Date(); update(i, job)
+                scheduleRetry(after: 20)
+                return true
+            }
             let verified = r.body["verified"] as? Bool ?? false
             job.stage = verified ? .verified : .rejected
             if !verified {
@@ -242,7 +276,8 @@ final class UploadQueue: ObservableObject {
     private func makeCopies(jobId: String, deviceId: String, key: CaptureKey) async -> Bool {
         guard let job = jobs.first(where: { $0.id == jobId }), let cid = job.captureId else { return true }
         let src = CaptureStore.fileURL(job.fileName)
-        guard FileManager.default.fileExists(atPath: src.path) else { changeJob(jobId) { $0.copiesDone = true }; return true }
+        // A video's copies are made from its working file; a photo sends only its camera direction (build 24).
+        if !job.isPhoto && !FileManager.default.fileExists(atPath: src.path) { changeJob(jobId) { $0.copiesDone = true }; return true }
         let dir = CaptureStore.folder.appendingPathComponent("copies/" + jobId, isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         var stored = Set(job.copiesStored ?? [])
@@ -257,6 +292,7 @@ final class UploadQueue: ObservableObject {
                 }
                 remember("path")
             }
+            if job.isPhoto { changeJob(jobId) { $0.copiesDone = true }; return true }
             if !stored.contains("strips") {
                 // Strips first: they are the quickest to make, and they are what puts this angle in the scrolling list.
                 let strips = try await CopyMaker.strips(src, folder: dir)

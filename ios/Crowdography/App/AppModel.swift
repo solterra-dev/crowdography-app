@@ -22,7 +22,7 @@ final class AppModel: ObservableObject {
     @Published var notice: String?
 
     let location = LocationProvider()
-    let queue = UploadQueue()
+    let queue = UploadQueue.shared
     let library = FootageLibrary()
     lazy var recorder = Recorder(location: location, queue: queue)
     private(set) var deviceId: String?
@@ -243,19 +243,41 @@ final class AppModel: ObservableObject {
         return (r["groups"] as? [[String: Any]] ?? []).compactMap(GroupSummary.init)
     }
 
-    /// Every angle in a group, in the order they started.
+    /// Every angle in a group (or a moment, build 24), in the order they started.
     func groupFootage(_ id: String) async throws -> (group: GroupSummary?, clips: [GroupClip]) {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
-        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/footage", ["gathering_id": id], deviceId: deviceId, key: key).body
+        let r = id.hasPrefix("moment-")
+            ? try await APIClient.shared.postSigned("/v1/crowd/moments/footage", ["moment_id": id], deviceId: deviceId, key: key).body
+            : try await APIClient.shared.postSigned("/v1/crowd/gatherings/footage", ["gathering_id": id], deviceId: deviceId, key: key).body
         return ((r["group"] as? [String: Any]).flatMap(GroupSummary.init), (r["items"] as? [[String: Any]] ?? []).compactMap(GroupClip.init))
     }
 
-    /// A fresh private link to one angle in a group.
-    func groupLink(_ captureId: String) async throws -> URL {
+    /// A fresh private link to one angle in a group or a moment.
+    func groupLink(_ captureId: String, in groupId: String) async throws -> URL {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
-        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/view", ["capture_id": captureId], deviceId: deviceId, key: key).body
+        let r = groupId.hasPrefix("moment-")
+            ? try await APIClient.shared.postSigned("/v1/crowd/moments/view", ["moment_id": groupId, "capture_id": captureId], deviceId: deviceId, key: key).body
+            : try await APIClient.shared.postSigned("/v1/crowd/gatherings/view", ["capture_id": captureId], deviceId: deviceId, key: key).body
         guard let u = (r["url"] as? String).flatMap({ URL(string: $0) }) else { throw APIError(status: 0, code: "no_link", message: "Chronum did not give a link to that angle.") }
         return u
+    }
+
+    // MARK: moments (Jeff 2026-11-26: nearby clips grouped automatically, for people who share)
+
+    /// Whether this account shares with others filming nearby. Off until the person turns it on.
+    func nearbySharing(set on: Bool? = nil) async throws -> Bool {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        var body: [String: Any] = [:]
+        if let on { body["nearby"] = on }
+        let r = try await APIClient.shared.postSigned("/v1/crowd/sharing", body, deviceId: deviceId, key: key).body
+        return r["nearby"] as? Bool ?? false
+    }
+
+    /// Moments this account filmed in that someone else filmed too, newest first.
+    func myMoments() async throws -> [GroupSummary] {
+        guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
+        let r = try await APIClient.shared.postSigned("/v1/crowd/moments/mine", [:], deviceId: deviceId, key: key).body
+        return (r["moments"] as? [[String: Any]] ?? []).compactMap(GroupSummary.init)
     }
 }
 
