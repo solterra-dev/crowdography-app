@@ -40,9 +40,9 @@ final class StatementTests: XCTestCase {
     }
 
     func testRequestSigningText() {
-        let m = APIClient.signingMessage(method: "POST", path: "/v1/crowd/tickets", time: 1_763_249_400, nonce: "00112233445566778899aabbccddeeff", body: Data("{}".utf8))
+        let m = APIClient.signingMessage(method: "POST", path: "/v1/captures/tickets", time: 1_763_249_400, nonce: "00112233445566778899aabbccddeeff", body: Data("{}".utf8))
         XCTAssertEqual(String(decoding: m, as: UTF8.self),
-                       "POST\n/v1/crowd/tickets\n1763249400\n00112233445566778899aabbccddeeff\n44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a")
+                       "POST\n/v1/captures/tickets\n1763249400\n00112233445566778899aabbccddeeff\n44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a")
     }
 
     func testNoncesAreOneTimeAndWellFormed() {

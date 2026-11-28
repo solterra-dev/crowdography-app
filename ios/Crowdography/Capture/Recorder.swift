@@ -57,7 +57,7 @@ final class Recorder: ObservableObject {
     private func fetchTicket() async throws -> Ticket {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_registered", message: "This phone is not signed up yet.") }
         let gid = gatheringId
-        let r = try await api.postSigned("/v1/crowd/tickets", ["gathering_id": gid.map { $0 as Any } ?? NSNull()], deviceId: deviceId, key: key).body
+        let r = try await api.postSigned("/v1/captures/tickets", ["gathering_id": gid.map { $0 as Any } ?? NSNull()], deviceId: deviceId, key: key).body
         guard let tid = r["ticket_id"] as? String, let nonce = r["nonce"] as? String else {
             throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give a ticket.")
         }

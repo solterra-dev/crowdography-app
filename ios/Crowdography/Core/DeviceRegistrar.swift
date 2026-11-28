@@ -36,7 +36,7 @@ enum DeviceRegistrar {
         let key = try CaptureKey.loadOrCreate()
         let pem = key.publicKeyPEM
 
-        let ch = try await api.postUnsigned("/v1/crowd/devices/challenges", [:])
+        let ch = try await api.postUnsigned("/v1/devices/challenges", [:])
         guard let challengeId = ch["challenge_id"] as? String, let challenge = ch["challenge"] as? String else { throw RegistrationError.badChallenge }
 
         let keyId = try await attest.generateKey()   // already base64 of the 32-byte key id
@@ -47,6 +47,7 @@ enum DeviceRegistrar {
             "platform": "ios",
             "public_key_pem": pem,
             "challenge_id": challengeId,
+            "application_id": Config.chronumApplicationId,   // 2026-11-28: the app this phone runs, on Chronum's plain addresses
             "attestation": attestation.base64EncodedString(),
             "key_id": keyId,
             // Jeff 2026-11-15: keep device data. Apps cannot read hardware serial numbers; make, model and versions are kept.
@@ -56,7 +57,7 @@ enum DeviceRegistrar {
             "app_version": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0",
         ]
         do {
-            let r = try await api.postUnsigned("/v1/crowd/devices", body)
+            let r = try await api.postUnsigned("/v1/devices", body)
             guard let id = r["device_id"] as? String else { throw RegistrationError.missingDeviceId }
             Keychain.write(deviceIdAccount, Data(id.utf8))
             return id

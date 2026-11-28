@@ -88,7 +88,7 @@ final class UploadQueue: ObservableObject {
             if job.stage == .checking, let cid = job.captureId {
                 if let t = job.checkAskedAt, Date().timeIntervalSince(t) < 15 { return false }
                 job.checkAskedAt = Date()
-                let r = try await api.postSigned("/v1/crowd/captures/status", ["capture_id": cid], deviceId: deviceId, key: key).body
+                let r = try await api.postSigned("/v1/captures/status", ["capture_id": cid], deviceId: deviceId, key: key).body
                 switch r["status"] as? String {
                 case "verified": job.stage = .verified
                 case "rejected":
@@ -111,7 +111,7 @@ final class UploadQueue: ObservableObject {
                     // An unused address ran out: ask again (Chronum makes a new pending record; the old one stays unused).
                     job.mediaAssetId = nil
                 }
-                let r = try await api.postSigned("/v1/crowd/captures/upload-requests",
+                let r = try await api.postSigned("/v1/captures/upload-requests",
                                                  ["mime_type": job.mimeType, "byte_size": job.byteSize ?? 0], deviceId: deviceId, key: key).body
                 guard let mid = r["media_asset_id"] as? String, let u = (r["upload_url"] as? String).flatMap(URL.init(string:)) else {
                     throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give an upload address.")
@@ -144,7 +144,7 @@ final class UploadQueue: ObservableObject {
                                       pathSha256: job.pathSha256, clock: job.ticket.clock)
             let bytes = try st.signedBytes()
             let sig = try key.signBase64(bytes)
-            let r = try await api.postSigned("/v1/crowd/captures",
+            let r = try await api.postSigned("/v1/captures",
                                              ["media_asset_id": job.mediaAssetId!, "statement": String(decoding: bytes, as: UTF8.self), "signature": sig],
                                              deviceId: deviceId, key: key)
             job.captureId = r.body["capture_id"] as? String
@@ -335,7 +335,7 @@ final class UploadQueue: ObservableObject {
     private func sendCopy(_ cid: String, kind: String, file: URL, mime: String, frames: Int?, deviceId: String, key: CaptureKey) async throws {
         let size = (try FileManager.default.attributesOfItem(atPath: file.path)[.size] as? NSNumber)?.intValue ?? 0
         do {
-            let r = try await api.postSigned("/v1/crowd/captures/copies/upload-requests",
+            let r = try await api.postSigned("/v1/captures/copies/upload-requests",
                                              ["capture_id": cid, "kind": kind, "mime_type": mime, "byte_size": size], deviceId: deviceId, key: key).body
             guard let u = (r["upload_url"] as? String).flatMap(URL.init(string:)) else {
                 throw APIError(status: 0, code: "bad_answer", message: "Chronum did not give an address for the \(kind) copy.")
@@ -349,6 +349,6 @@ final class UploadQueue: ObservableObject {
         }
         var body: [String: Any] = ["capture_id": cid, "kind": kind, "byte_size": size]
         if let frames { body["frame_count"] = frames }
-        _ = try await api.postSigned("/v1/crowd/captures/copies", body, deviceId: deviceId, key: key)
+        _ = try await api.postSigned("/v1/captures/copies", body, deviceId: deviceId, key: key)
     }
 }

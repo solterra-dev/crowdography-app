@@ -8,7 +8,7 @@ struct APIError: LocalizedError {
 }
 
 /// Talks to Chronum. Every request after sign-up carries three headers proving it came from this registered phone:
-/// X-Crowd-Device, X-Crowd-Time, X-Crowd-Nonce and X-Crowd-Signature. The signature covers
+/// X-Chronum-Device, X-Chronum-Time, X-Chronum-Nonce and X-Chronum-Signature. The signature covers
 /// "METHOD\nPATH\nTIME\nNONCE\nsha256(body)". The nonce is a random one-time number: the server accepts each signed request once.
 final class APIClient {
     static let shared = APIClient()
@@ -44,26 +44,26 @@ final class APIClient {
         req.httpMethod = "POST"
         req.httpBody = body
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue(deviceId, forHTTPHeaderField: "X-Crowd-Device")
-        req.setValue(String(time), forHTTPHeaderField: "X-Crowd-Time")
-        req.setValue(nonce, forHTTPHeaderField: "X-Crowd-Nonce")
-        req.setValue(sig, forHTTPHeaderField: "X-Crowd-Signature")
+        req.setValue(deviceId, forHTTPHeaderField: "X-Chronum-Device")
+        req.setValue(String(time), forHTTPHeaderField: "X-Chronum-Time")
+        req.setValue(nonce, forHTTPHeaderField: "X-Chronum-Nonce")
+        req.setValue(sig, forHTTPHeaderField: "X-Chronum-Signature")
         return try await send(req, okStatuses: [422])
     }
 
     /// One signed request to Chronum's clock, timed on the phone's own clock right around the network trip
     /// (after signing, so the time the security chip takes to sign is not counted).
     func clockPing(deviceId: String, key: CaptureKey) async throws -> (sentMs: Double, serverMs: Double, receivedMs: Double) {
-        let path = "/v1/crowd/clock", body = Data("{}".utf8)
+        let path = "/v1/clock", body = Data("{}".utf8)
         let time = Int(Date().timeIntervalSince1970), nonce = Self.newNonce()
         let sig = try key.signBase64(Self.signingMessage(method: "POST", path: path, time: time, nonce: nonce, body: body))
         var req = URLRequest(url: Config.apiBase.appendingPathComponent(path))
         req.httpMethod = "POST"; req.httpBody = body
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue(deviceId, forHTTPHeaderField: "X-Crowd-Device")
-        req.setValue(String(time), forHTTPHeaderField: "X-Crowd-Time")
-        req.setValue(nonce, forHTTPHeaderField: "X-Crowd-Nonce")
-        req.setValue(sig, forHTTPHeaderField: "X-Crowd-Signature")
+        req.setValue(deviceId, forHTTPHeaderField: "X-Chronum-Device")
+        req.setValue(String(time), forHTTPHeaderField: "X-Chronum-Time")
+        req.setValue(nonce, forHTTPHeaderField: "X-Chronum-Nonce")
+        req.setValue(sig, forHTTPHeaderField: "X-Chronum-Signature")
         let sent = Date().timeIntervalSince1970 * 1000
         let r = try await send(req)
         let received = Date().timeIntervalSince1970 * 1000

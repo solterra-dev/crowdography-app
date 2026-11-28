@@ -37,7 +37,7 @@ final class AppModel: ObservableObject {
             let id = try await DeviceRegistrar.register()
             key = k; deviceId = id
             // Jeff 2026-11-21: sign in before filming. The server says whether this phone is signed in and whether sign-in is switched on.
-            let s = try await APIClient.shared.postSigned("/v1/crowd/session", [:], deviceId: id, key: k).body
+            let s = try await APIClient.shared.postSigned("/v1/accounts/session", [:], deviceId: id, key: k).body
             phoneLoginOn = (s["phone_login"] as? Bool) == true
             if (s["signed_in"] as? Bool) != true && (s["sign_in_required"] as? Bool) == true { phase = .signIn; return }
             // Jeff 2026-11-22: every photo and video has a named author, so the account needs a name before filming.
@@ -115,7 +115,7 @@ final class AppModel: ObservableObject {
         if let password { body["password"] = password }
         if let name { body["full_name"] = name }
         do {
-            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/codes", body, deviceId: deviceId, key: key).body
+            let r = try await APIClient.shared.postSigned("/v1/accounts/signin/codes", body, deviceId: deviceId, key: key).body
             if (r["signed_in"] as? Bool) == true { await finishSignIn(r); return nil }
             guard let sid = r["signin_id"] as? String else { return "Chronum did not confirm the code was sent. Try again." }
             signinId = sid
@@ -137,7 +137,7 @@ final class AppModel: ObservableObject {
         case .login: break
         }
         do {
-            let r = try await APIClient.shared.postSigned("/v1/crowd/signin/verify", body, deviceId: deviceId, key: key).body
+            let r = try await APIClient.shared.postSigned("/v1/accounts/signin/verify", body, deviceId: deviceId, key: key).body
             await finishSignIn(r)
             return nil
         } catch { return error.localizedDescription }
@@ -160,7 +160,7 @@ final class AppModel: ObservableObject {
         if recorder.isRecording { return "Stop filming first." }
         if queue.pendingCount > 0 { return "Wait until everything has finished uploading, then sign out." }
         do {
-            _ = try await APIClient.shared.postSigned("/v1/crowd/signout", [:], deviceId: deviceId, key: key)
+            _ = try await APIClient.shared.postSigned("/v1/accounts/signout", [:], deviceId: deviceId, key: key)
             leaveGathering()
             queue.forgetFinished()
             library.clear()
@@ -175,7 +175,7 @@ final class AppModel: ObservableObject {
     func saveName(_ name: String) async -> String? {
         guard let deviceId, let key else { return "This phone is not ready yet. Close the app and open it again." }
         do {
-            let r = try await APIClient.shared.postSigned("/v1/crowd/account/profile", ["full_name": name], deviceId: deviceId, key: key).body
+            let r = try await APIClient.shared.postSigned("/v1/accounts/profile", ["full_name": name], deviceId: deviceId, key: key).body
             authorName = r["name"] as? String ?? name
             phase = .signingUp
             await enterHome(began: nil)
@@ -189,7 +189,7 @@ final class AppModel: ObservableObject {
     func join(code: String) async {
         guard let deviceId, let key else { return }
         do {
-            let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/join", ["join_code": code.uppercased()], deviceId: deviceId, key: key).body
+            let r = try await APIClient.shared.postSigned("/v1/gatherings/join", ["join_code": code.uppercased()], deviceId: deviceId, key: key).body
             guard let gid = r["gathering_id"] as? String else { return }
             gatheringName = r["gathering_name"] as? String
             currentGroupId = gid
@@ -222,7 +222,7 @@ final class AppModel: ObservableObject {
         let body: [String: Any] = ["gathering_name": name, "gathering_kind": "public_gathering",
                                    "starts_at": iso.string(from: Date().addingTimeInterval(-60)), "ends_at": iso.string(from: Date().addingTimeInterval(Double(hours) * 3600)),
                                    "area_lat": fix.coordinate.latitude, "area_lng": fix.coordinate.longitude, "area_radius_m": 5000]
-        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings", body, deviceId: deviceId, key: key).body
+        let r = try await APIClient.shared.postSigned("/v1/gatherings", body, deviceId: deviceId, key: key).body
         guard let gid = r["gathering_id"] as? String, let code = r["join_code"] as? String else {
             throw APIError(status: 0, code: "no_group", message: "Chronum did not confirm the group. Try again.")
         }
@@ -239,7 +239,7 @@ final class AppModel: ObservableObject {
 
     func myGroups() async throws -> [GroupSummary] {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
-        let r = try await APIClient.shared.postSigned("/v1/crowd/gatherings/mine", [:], deviceId: deviceId, key: key).body
+        let r = try await APIClient.shared.postSigned("/v1/gatherings/mine", [:], deviceId: deviceId, key: key).body
         return (r["groups"] as? [[String: Any]] ?? []).compactMap(GroupSummary.init)
     }
 
@@ -247,8 +247,8 @@ final class AppModel: ObservableObject {
     func groupFootage(_ id: String) async throws -> (group: GroupSummary?, clips: [GroupClip]) {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
         let r = id.hasPrefix("moment-")
-            ? try await APIClient.shared.postSigned("/v1/crowd/moments/footage", ["moment_id": id], deviceId: deviceId, key: key).body
-            : try await APIClient.shared.postSigned("/v1/crowd/gatherings/footage", ["gathering_id": id], deviceId: deviceId, key: key).body
+            ? try await APIClient.shared.postSigned("/v1/moments/footage", ["moment_id": id], deviceId: deviceId, key: key).body
+            : try await APIClient.shared.postSigned("/v1/gatherings/footage", ["gathering_id": id], deviceId: deviceId, key: key).body
         return ((r["group"] as? [String: Any]).flatMap(GroupSummary.init), (r["items"] as? [[String: Any]] ?? []).compactMap(GroupClip.init))
     }
 
@@ -256,8 +256,8 @@ final class AppModel: ObservableObject {
     func groupLink(_ captureId: String, in groupId: String) async throws -> URL {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
         let r = groupId.hasPrefix("moment-")
-            ? try await APIClient.shared.postSigned("/v1/crowd/moments/view", ["moment_id": groupId, "capture_id": captureId], deviceId: deviceId, key: key).body
-            : try await APIClient.shared.postSigned("/v1/crowd/gatherings/view", ["capture_id": captureId], deviceId: deviceId, key: key).body
+            ? try await APIClient.shared.postSigned("/v1/moments/view", ["moment_id": groupId, "capture_id": captureId], deviceId: deviceId, key: key).body
+            : try await APIClient.shared.postSigned("/v1/gatherings/view", ["capture_id": captureId], deviceId: deviceId, key: key).body
         guard let u = (r["url"] as? String).flatMap({ URL(string: $0) }) else { throw APIError(status: 0, code: "no_link", message: "Chronum did not give a link to that angle.") }
         return u
     }
@@ -269,14 +269,14 @@ final class AppModel: ObservableObject {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
         var body: [String: Any] = [:]
         if let on { body["nearby"] = on }
-        let r = try await APIClient.shared.postSigned("/v1/crowd/sharing", body, deviceId: deviceId, key: key).body
+        let r = try await APIClient.shared.postSigned("/v1/accounts/sharing", body, deviceId: deviceId, key: key).body
         return r["nearby"] as? Bool ?? false
     }
 
     /// Moments this account filmed in that someone else filmed too, newest first.
     func myMoments() async throws -> [GroupSummary] {
         guard let deviceId, let key else { throw APIError(status: 0, code: "not_ready", message: notReady) }
-        let r = try await APIClient.shared.postSigned("/v1/crowd/moments/mine", [:], deviceId: deviceId, key: key).body
+        let r = try await APIClient.shared.postSigned("/v1/moments/mine", [:], deviceId: deviceId, key: key).body
         return (r["moments"] as? [[String: Any]] ?? []).compactMap(GroupSummary.init)
     }
 }

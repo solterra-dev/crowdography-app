@@ -41,7 +41,7 @@ final class FootageLibrary: ObservableObject {
         loading = true
         defer { loading = false; loadedOnce = true }
         do {
-            let r = try await api.postSigned("/v1/crowd/footage", ["limit": Self.pageSize], deviceId: deviceId, key: key).body
+            let r = try await api.postSigned("/v1/captures/mine", ["limit": Self.pageSize], deviceId: deviceId, key: key).body
             let now = Date()
             items = (r["items"] as? [[String: Any]] ?? []).compactMap { FootageItem($0, receivedAt: now) }
             nextBefore = r["next_before"] as? String
@@ -55,7 +55,7 @@ final class FootageLibrary: ObservableObject {
         loading = true
         defer { loading = false }
         do {
-            let r = try await api.postSigned("/v1/crowd/footage", ["limit": Self.pageSize, "before": before], deviceId: deviceId, key: key).body
+            let r = try await api.postSigned("/v1/captures/mine", ["limit": Self.pageSize, "before": before], deviceId: deviceId, key: key).body
             let now = Date()
             let known = Set(items.map(\.id))
             let more = (r["items"] as? [[String: Any]] ?? []).compactMap { FootageItem($0, receivedAt: now) }
@@ -68,7 +68,7 @@ final class FootageLibrary: ObservableObject {
     func freshLink(for id: String) async throws -> URL {
         if let item = items.first(where: { $0.id == id }), item.linkIsFresh, let url = item.viewURL { return url }
         guard let deviceId, let key else { throw notReady }
-        let r = try await api.postSigned("/v1/crowd/footage/view", ["capture_id": id], deviceId: deviceId, key: key).body
+        let r = try await api.postSigned("/v1/captures/mine/view", ["capture_id": id], deviceId: deviceId, key: key).body
         guard let text = r["url"] as? String, let url = URL(string: text) else {
             throw APIError(status: 0, code: "no_link", message: "Chronum did not give a link to that file.")
         }

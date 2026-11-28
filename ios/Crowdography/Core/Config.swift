@@ -4,6 +4,9 @@ import Foundation
 enum Config {
     /// Chronum's address for Crowdography. Chronum answers at chronumapi.com/v1 (there is no api. subdomain).
     static let apiBase = URL(string: "https://chronumapi.com")!
+    /// This app's id in Chronum's app list (registered 2026-11-26). Sent when the phone signs up, so the phone, its accounts
+    /// and everything it films belong to Crowdography and never mix with another app built on Chronum.
+    static let chronumApplicationId = "01M8DKTKRNQFEHA0J3S7QB1RZH"
 
     /// Jeff 2026-11-15: pieces are at most 15 minutes; a longer recording rolls into a new chained piece.
     /// Build 24 (Jeff 2026-11-26): back to the full 15 minutes. A piece over 500 MB is checked by a background job on the

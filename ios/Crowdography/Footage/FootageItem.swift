@@ -1,6 +1,6 @@
 import Foundation
 
-/// One stored photo or video piece from the account, as Chronum lists it (POST /v1/crowd/footage).
+/// One stored photo or video piece from the account, as Chronum lists it (POST /v1/captures/mine).
 struct FootageItem: Identifiable, Equatable {
     /// The capture id.
     let id: String
